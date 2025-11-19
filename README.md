@@ -4,7 +4,7 @@
 
 # Associative Dreaming
 
-- The yin to sequential thinking's yang -
+The yin to sequential thinking's yang
 
 ### *Unlock the creative unconscious of your AI*
 
