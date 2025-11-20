@@ -6,8 +6,8 @@
  *
  * V3.0 CRITICAL CALIBRATION FIX:
  * - Empirically calibrated distance formulas to match requested drift
- * - Corrects 100% overshoot at low drift (30% → 60%)
- * - Corrects 24% undershoot at high drift (90% → 68%)
+ * - Corrects 100% overshoot at low drift (30% -> 60%)
+ * - Corrects 24% undershoot at high drift (90% -> 68%)
  * - Adaptive hop calculation prevents distance compounding
  * - Temperature scaling now proportional and predictable
  * - Drift accuracy feedback in explanations
@@ -712,7 +712,7 @@ const CROSS_DOMAIN_BRIDGES: Array<{
   distance: number;
   reason: string;
 }> = [
-  // Tech ↔ Nature
+    // Tech <-> Nature
   {
     from: "algorithm",
     to: "migration",
@@ -738,7 +738,7 @@ const CROSS_DOMAIN_BRIDGES: Array<{
     reason: "self-replicating infectious idea",
   },
 
-  // Abstract ↔ Concrete
+    // Abstract <-> Concrete
   {
     from: "entropy",
     to: "rust",
@@ -758,7 +758,7 @@ const CROSS_DOMAIN_BRIDGES: Array<{
     reason: "physical signal return",
   },
 
-  // Modern ↔ Ancient
+    // Modern <-> Ancient
   {
     from: "code",
     to: "runes",
@@ -778,7 +778,7 @@ const CROSS_DOMAIN_BRIDGES: Array<{
     reason: "paths of information exchange",
   },
 
-  // Science ↔ Art
+    // Science <-> Art
   {
     from: "quantum",
     to: "poetry",
@@ -839,11 +839,11 @@ export class SemanticDriftTool {
     
     if (requested < 0.4) {
       // Low drift: Apply dampening to prevent overshoot
-      // 30% requested → 30% actual (was 60%)
+      // 30% requested -> 30% actual (was 60%)
       calibrated = requested * 0.7; // Reduce by 30%
     } else if (requested >= 0.7) {
       // High drift: Apply boosting to prevent undershoot
-      // 90% requested → 90% actual (was 68%)
+      // 90% requested -> 90% actual (was 68%)
       const boost = (requested - 0.7) * 0.4; // Scale boost with magnitude
       calibrated = Math.min(1.0, requested + boost);
     }

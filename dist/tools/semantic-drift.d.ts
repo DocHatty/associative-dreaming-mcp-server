@@ -6,8 +6,8 @@
  *
  * V3.0 CRITICAL CALIBRATION FIX:
  * - Empirically calibrated distance formulas to match requested drift
- * - Corrects 100% overshoot at low drift (30% → 60%)
- * - Corrects 24% undershoot at high drift (90% → 68%)
+ * - Corrects 100% overshoot at low drift (30% -> 60%)
+ * - Corrects 24% undershoot at high drift (90% -> 68%)
  * - Adaptive hop calculation prevents distance compounding
  * - Temperature scaling now proportional and predictable
  * - Drift accuracy feedback in explanations

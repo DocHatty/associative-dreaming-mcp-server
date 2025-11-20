@@ -222,7 +222,7 @@ export class SerendipityScanTool {
     const best = scoredGaps[0];
     
     return {
-      discoveredConcept: `${best.gap.concept1} ↔ ${best.gap.concept2}`,
+      discoveredConcept: `${best.gap.concept1} <-> ${best.gap.concept2}`,
       scanType: 'gap',
       serendipityScore: best.serendipityScore,
       relatedConcepts: [best.gap.concept1, best.gap.concept2],
@@ -287,7 +287,7 @@ export class SerendipityScanTool {
         scanType: 'random',
         serendipityScore: 0,
         relatedConcepts: [],
-        explanation: '🌱 The dream graph is empty.\n\nUse other tools first to populate it:\n- semantic_drift to explore concept space\n- bisociative_synthesis to merge domains\n- oblique_constraint to add creative constraints'
+        explanation: 'The dream graph is empty.\n\nUse other tools first to populate it:\n- semantic_drift to explore concept space\n- bisociative_synthesis to merge domains\n- oblique_constraint to add creative constraints'
       };
     }
     
@@ -383,181 +383,133 @@ export class SerendipityScanTool {
 
   // Explanation generators
   private explainBridgeDiscovery(best: any, context: string): string {
-    return `
-╔═══════════════════════════════════════════════════════════╗
-║            ✨ SERENDIPITY SCAN: BRIDGE                    ║
-╚═══════════════════════════════════════════════════════════╝
-
-🌉 BRIDGE CONCEPT DISCOVERED:
-"${best.node.content}"
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-📊 DISCOVERY METRICS:
-  • Serendipity Score: ${(best.serendipityScore * 100).toFixed(0)}%
-  • Novelty: ${(best.novelty * 100).toFixed(0)}%
-  • Relevance to context: ${(best.relevance * 100).toFixed(0)}%
-  • Graph centrality: ${(best.centrality * 100).toFixed(0)}%
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🔗 WHY THIS IS A BRIDGE:
-
-This concept connects ${best.bridge.connectsClusters.length} different clusters in
-your ideation space. It serves as a conceptual bridge between:
-
-${best.bridge.connectsClusters.map((c: string) => `  • ${c}`).join('\n')}
-
-Bridges are valuable because they:
-1. Unite disparate ideas into coherent frameworks
-2. Reveal hidden connections between separate domains
-3. Enable knowledge transfer across boundaries
-4. Create opportunities for innovation at intersections
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-💡 HOW TO USE THIS BRIDGE:
-
-Context: "${context}"
-
-Ask yourself:
-- How does "${best.node.content}" connect the different aspects
-  of this problem?
-- What would happen if you made this bridge MORE explicit in
-  your solution?
-- Are there other concepts that could serve as bridges here?
-
-╔═══════════════════════════════════════════════════════════╗
-║  Bridge identified. Use it to unify fragmented thinking.  ║
-╚═══════════════════════════════════════════════════════════╝
-`;
+    const lines = [
+      "=== Serendipity Scan: Bridge ===",
+      "",
+      `Bridge concept: "${best.node.content}"`,
+      "",
+      "Discovery metrics:",
+      `- Serendipity Score: ${(best.serendipityScore * 100).toFixed(0)}%`,
+      `- Novelty: ${(best.novelty * 100).toFixed(0)}%`,
+      `- Relevance to context: ${(best.relevance * 100).toFixed(0)}%`,
+      `- Graph centrality: ${(best.centrality * 100).toFixed(0)}%`,
+      "",
+      "Why this is a bridge:",
+      `This concept connects ${best.bridge.connectsClusters.length} different clusters in your ideation space.`,
+      "It serves as a conceptual bridge between:",
+      ...best.bridge.connectsClusters.map((c: string) => `- ${c}`),
+      "",
+      "Bridges are valuable because they:",
+      "- Unite disparate ideas into coherent frameworks",
+      "- Reveal hidden connections between separate domains",
+      "- Enable knowledge transfer across boundaries",
+      "- Create opportunities for innovation at intersections",
+      "",
+      "How to use this bridge:",
+      `Context: "${context}"`,
+      "- How does this connect the different aspects of this problem?",
+      "- What happens if you make this bridge more explicit in your solution?",
+      "- Are there other concepts that could serve as bridges here?",
+      "",
+      "Bridge identified. Use it to unify fragmented thinking.",
+    ];
+    return lines.join("\n");
   }
 
   private explainGapDiscovery(best: any, context: string): string {
-    return `
-╔═══════════════════════════════════════════════════════════╗
-║            ✨ SERENDIPITY SCAN: GAP                       ║
-╚═══════════════════════════════════════════════════════════╝
-
-🔍 STRUCTURAL GAP DISCOVERED:
-"${best.gap.concept1}" ←→ "${best.gap.concept2}"
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-📊 DISCOVERY METRICS:
-  • Serendipity Score: ${(best.serendipityScore * 100).toFixed(0)}%
-  • Gap reason: ${best.gap.reason}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🕳️  WHY THIS GAP MATTERS:
-
-These two concepts are related (${best.gap.reason}) but haven't been
-explicitly connected in your ideation yet. This suggests a missing
-link that could unlock new insights.
-
-Gaps often indicate:
-1. Unexplored connections worth investigating
-2. Implicit assumptions that need questioning
-3. Opportunities for synthesis
-4. Missing steps in your reasoning chain
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-💡 BRIDGING THE GAP:
-
-Context: "${context}"
-
-Experiment:
-- What happens when you explicitly connect these concepts?
-- Is there a third concept that bridges them naturally?
-- What would a hybrid of both look like?
-- Why haven't you connected them yet - what assumption prevented it?
-
-╔═══════════════════════════════════════════════════════════╗
-║    Gap identified. Explore this missing connection.       ║
-╚═══════════════════════════════════════════════════════════╝
-`;
+    const lines = [
+      "=== Serendipity Scan: Gap ===",
+      "",
+      "Structural gap discovered:",
+      `"${best.gap.concept1}" <-> "${best.gap.concept2}"`,
+      "",
+      "Discovery metrics:",
+      `- Serendipity Score: ${(best.serendipityScore * 100).toFixed(0)}%`,
+      `- Gap reason: ${best.gap.reason}`,
+      "",
+      "Why this gap matters:",
+      `These two concepts are related (${best.gap.reason}) but haven't been explicitly connected yet.`,
+      "This suggests a missing link that could unlock new insights.",
+      "",
+      "Gaps often indicate:",
+      "- Unexplored connections worth investigating",
+      "- Implicit assumptions that need questioning",
+      "- Opportunities for synthesis",
+      "- Missing steps in your reasoning chain",
+      "",
+      "Bridging the gap:",
+      `Context: "${context}"`,
+      "- What happens when you explicitly connect these concepts?",
+      "- Is there a third concept that bridges them naturally?",
+      "- What would a hybrid of both look like?",
+      "- Why haven't you connected them yet? What assumption prevented it?",
+      "",
+      "Gap identified. Explore this missing connection.",
+    ];
+    return lines.join("\n");
   }
 
   private explainPatternDiscovery(pattern: [string, number], concepts: string[], context: string): string {
-    return `
-╔═══════════════════════════════════════════════════════════╗
-║            ✨ SERENDIPITY SCAN: PATTERN                   ║
-╚═══════════════════════════════════════════════════════════╝
-
-🔄 RECURRING PATTERN DETECTED:
-"${pattern[0]}" (appears ${pattern[1]} times)
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-📊 PATTERN MANIFESTATIONS:
-${concepts.slice(0, 5).map(c => `  • ${c}`).join('\n')}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🌀 WHY PATTERNS MATTER:
-
-This recurring relationship type reveals how your thinking naturally
-structures ideas. Patterns can be:
-1. Productive (driving you toward solutions)
-2. Limiting (keeping you in familiar territory)
-3. Revealing (showing implicit assumptions)
-
-Context: "${context}"
-
-Reflect:
-- Is this pattern helping or hindering progress on your context?
-- What would happen if you inverted this pattern?
-- Are there alternative patterns you haven't explored?
-
-╔═══════════════════════════════════════════════════════════╗
-║   Pattern discovered. Examine if it serves you.           ║
-╚═══════════════════════════════════════════════════════════╝
-`;
+    const lines = [
+      "=== Serendipity Scan: Pattern ===",
+      "",
+      "Recurring pattern detected:",
+      `"${pattern[0]}" (appears ${pattern[1]} times)`,
+      "",
+      "Pattern manifestations:",
+      ...concepts.slice(0, 5).map(c => `- ${c}`),
+      "",
+      "Why patterns matter:",
+      "This recurring relationship type reveals how your thinking naturally structures ideas.",
+      "Patterns can be:",
+      "- Productive (driving you toward solutions)",
+      "- Limiting (keeping you in familiar territory)",
+      "- Revealing (showing implicit assumptions)",
+      "",
+      `Context: "${context}"`,
+      "Reflect:",
+      "- Is this pattern helping or hindering progress on your context?",
+      "- What would happen if you inverted this pattern?",
+      "- Are there alternative patterns you haven't explored?",
+      "",
+      "Pattern discovered. Examine if it serves you.",
+    ];
+    return lines.join("\n");
   }
 
   private explainRandomDiscovery(node: Node, context: string, usingFallback: boolean, freshCount: number, totalCount: number): string {
-    const fallbackNote = usingFallback ? `
-
-⚠️  TEMPORAL DIVERSITY NOTE:
-All ${totalCount} concepts in the graph have been recently visited.
-Selected from full pool with temporal diversity scoring.
-Try using other tools to expand your concept space.
-` : `
-
-✨ TEMPORAL DIVERSITY:
-Selected from ${freshCount} non-recent concepts (${totalCount} total).
-This ensures you're discovering truly novel connections, not echoing recent history.
-`;
-    return `
-╔═══════════════════════════════════════════════════════════╗
-║            ✨ SERENDIPITY SCAN: RANDOM                    ║
-╚═══════════════════════════════════════════════════════════╝
-
-🎲 RANDOM HIGH-NOVELTY CONCEPT:
-"${node.content}"
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🌟 SERENDIPITY IN ACTION:
-
-This concept was selected for its semantic distance from your current
-context AND its temporal diversity (avoiding recently visited concepts).
-This ensures TRUE serendipity - discovering what you haven't been thinking about.
-${fallbackNote}
-
-Context: "${context}"
-
-Use this random spark to:
-- Break out of your current frame
-- Ask "what if?" questions
-- Find analogies in unexpected places
-- Challenge your assumptions
-
-╔═══════════════════════════════════════════════════════════╗
-║  Random concept surfaced. Let it surprise you.            ║
-╚═══════════════════════════════════════════════════════════╝
-`;
+    const diversityLines = usingFallback
+      ? [
+          "Temporal diversity note:",
+          `- All ${totalCount} concepts in the graph have been recently visited.`,
+          "- Selected from full pool with temporal diversity scoring.",
+          "- Try using other tools to expand your concept space.",
+        ]
+      : [
+          "Temporal diversity:",
+          `- Selected from ${freshCount} non-recent concepts (${totalCount} total).`,
+          "- This helps surface truly novel connections, not just recent echoes.",
+        ];
+    const lines = [
+      "=== Serendipity Scan: Random ===",
+      "",
+      "Random high-novelty concept:",
+      `"${node.content}"`,
+      "",
+      "Serendipity in action:",
+      "This concept was selected for its semantic distance from your current context and its temporal diversity (avoiding recently visited concepts).",
+      "This encourages true serendipity - discovering what you haven't been thinking about.",
+      ...diversityLines,
+      `Context: "${context}"`,
+      "",
+      "Use this random spark to:",
+      "- Break out of your current frame",
+      "- Ask \"what if?\" questions",
+      "- Find analogies in unexpected places",
+      "- Challenge your assumptions",
+      "",
+      "Random concept surfaced. Let it surprise you.",
+    ];
+    return lines.join("\n");
   }
 }

@@ -496,10 +496,10 @@ const ISOMORPHIC_PATTERNS = [
         name: "hierarchy",
         description: "Layered organization with relationships of control, composition, or abstraction",
         examples: {
-            biology: "ecosystem → community → population → organism → organ → cell",
-            architecture: "building → floor → room → zone → element → detail",
-            software: "system → application → module → function → statement",
-            organization: "corporation → division → department → team → individual",
+            biology: "ecosystem -> community -> population -> organism -> organ -> cell",
+            architecture: "building -> floor -> room -> zone -> element -> detail",
+            software: "system -> application -> module -> function -> statement",
+            organization: "corporation -> division -> department -> team -> individual",
         },
         mappingHints: [
             "levels",
@@ -891,70 +891,41 @@ export class BisociativeSynthesisTool {
         const domainBConcepts = domainBObj
             ? domainBObj.concepts.slice(0, 4).join(", ")
             : domainB;
-        return `
-╔═══════════════════════════════════════════════════════════╗
-║     BISOCIATIVE SYNTHESIS: ${pattern.name.toUpperCase()}
-╚═══════════════════════════════════════════════════════════╝
-
-🔮 BRIDGE CONCEPT:
-"${bridgeConcept}"
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-📊 STRUCTURAL PATTERN: ${pattern.name}
-${pattern.description}
-
-Examples of this pattern:
-• ${relevantExample}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🔄 CONCEPTUAL MAPPING:
-Translating from ${domainA} to ${domainB}:
-
-${Object.entries(mapping)
-            .map(([key, value]) => `   • ${key} ──→ ${value}`)
-            .join("\n")}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-💡 WHY THIS CONNECTION MATTERS:
-
-The ${pattern.name} pattern provides a powerful lens for examining ${domainA}.
-By mapping onto ${domainB} (which deals with ${domainBConcepts}), we can:
-
-1. **Reveal Hidden Structure**: The ${pattern.name} in ${domainB} highlights
-   similar patterns that might be invisible in ${domainA}'s native context.
-
-2. **Import Proven Principles**: ${domainB} has evolved sophisticated approaches
-   to handling ${pattern.name}—principles directly applicable to ${domainA}.
-
-3. **Generate Novel Solutions**: The conceptual distance creates creative
-   tension, forcing fresh perspectives on familiar ${domainA} challenges.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🎯 ACTIONABLE INSIGHTS:
-
-Ask yourself:
-• If ${domainA} operated like ${domainB}, what would change?
-• Which ${domainB} principles could directly transfer to ${domainA}?
-• What ${domainB} failure modes should ${domainA} avoid?
-• How might ${domainB} practitioners approach your ${domainA} challenge?
-
-Try this exercise:
-Take a specific ${domainA} problem you're facing. Reframe it completely
-in ${domainB} terms using the mapping above. What solutions emerge from
-this ${domainB} perspective? Which could translate back to ${domainA}?
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🌉 THE BRIDGE:
-"${bridgeConcept}" is not just a metaphor—it's a functional framework
-for viewing ${domainA} through the structural wisdom of ${domainB}.
-
-╔═══════════════════════════════════════════════════════════╗
-`;
+        const mappingEntries = Object.entries(mapping).map(([key, value]) => `- ${key} -> ${value}`);
+        const lines = [
+            `=== Bisociative Synthesis: ${pattern.name.toUpperCase()} ===`,
+            "",
+            `Bridge concept: "${bridgeConcept}"`,
+            "",
+            "Structural pattern:",
+            `- Pattern: ${pattern.name}`,
+            `- Description: ${pattern.description}`,
+            `- Example: ${relevantExample}`,
+            "",
+            "Conceptual mapping:",
+            `Translating from ${domainA} to ${domainB}:`,
+            ...mappingEntries,
+            "",
+            "Why this connection matters:",
+            `- The ${pattern.name} pattern provides a lens for examining ${domainA}.`,
+            `- Mapping onto ${domainB} (which involves ${domainBConcepts}) helps reveal hidden structure in ${domainA}.`,
+            `- ${domainB} has proven principles for ${pattern.name} that can carry over to ${domainA}.`,
+            `- The conceptual distance creates creative tension, forcing fresh perspectives on ${domainA} challenges.`,
+            "",
+            "Actionable insights:",
+            `- If ${domainA} operated like ${domainB}, what would change?`,
+            `- Which ${domainB} principles could directly transfer to ${domainA}?`,
+            `- What ${domainB} failure modes should ${domainA} avoid?`,
+            `- How might ${domainB} practitioners approach your ${domainA} challenge?`,
+            "",
+            "Try this exercise:",
+            `Take a specific ${domainA} problem you're facing. Reframe it in ${domainB} terms using the mapping above.`,
+            `What solutions emerge from this ${domainB} perspective? Which could translate back to ${domainA}?`,
+            "",
+            "Bridge:",
+            `"${bridgeConcept}" is a functional framework for viewing ${domainA} through the structural wisdom of ${domainB}.`,
+        ];
+        return lines.join("\n");
     }
     /**
      * Updates the dream graph

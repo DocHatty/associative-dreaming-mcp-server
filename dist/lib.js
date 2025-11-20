@@ -124,23 +124,23 @@ export class AssociativeDreamingServer {
         let border = '';
         switch (toolName) {
             case 'semantic_drift':
-                prefix = chalk.blue('🌊 DRIFT');
+                prefix = chalk.blue('DRIFT');
                 border = '~'.repeat(40);
                 break;
             case 'bisociative_synthesis':
-                prefix = chalk.magenta('🔮 SYNTHESIS');
+                prefix = chalk.magenta('SYNTHESIS');
                 border = '*'.repeat(40);
                 break;
             case 'oblique_constraint':
-                prefix = chalk.yellow('🔄 CONSTRAINT');
+                prefix = chalk.yellow('CONSTRAINT');
                 border = '='.repeat(40);
                 break;
             case 'serendipity_scan':
-                prefix = chalk.green('✨ SERENDIPITY');
+                prefix = chalk.green('SERENDIPITY');
                 border = '+'.repeat(40);
                 break;
             default:
-                prefix = chalk.white('❓ UNKNOWN TOOL');
+                prefix = chalk.white('UNKNOWN TOOL');
                 border = '-'.repeat(40);
         }
         // Format a summary of the result based on the tool type
