@@ -20,9 +20,16 @@
  * - Temperature adds genuine creative chaos
  * - Rich explanation formatting that actually appears in output
  * - Fixed synonym problem - prioritizes semantically distant concepts
+ * 
+ * V2.2 ENHANCEMENTS:
+ * - Added domain-specific associations (medical, business, technical)
+ * - Expanded coverage to 600+ concepts with specialized terminology
  */
 
 import { DreamGraph, Node, EdgeType } from "../graph.js";
+import { MEDICAL_ASSOCIATIONS } from "../data/domains/medical.js";
+import { BUSINESS_ASSOCIATIONS } from "../data/domains/business.js";
+import { TECHNICAL_ASSOCIATIONS } from "../data/domains/technical.js";
 
 /**
  * Association with semantic distance weight
@@ -34,7 +41,9 @@ interface WeightedAssociation {
 }
 
 /**
- * Massively expanded word associations - 500+ concepts with distance weights
+ * Massively expanded word associations - 600+ concepts with distance weights
+ * Includes base associations + domain-specific expansions (medical, business, technical)
+ * 
  * Distance interpretation:
  * - 0.0-0.2: Synonyms, direct instances (avoid for high drift)
  * - 0.2-0.4: Close semantic neighbors
@@ -42,7 +51,7 @@ interface WeightedAssociation {
  * - 0.6-0.8: Metaphorical connections, distant but meaningful
  * - 0.8-1.0: Cross-domain leaps, bisociative creativity
  */
-const WEIGHTED_ASSOCIATIONS: Record<string, WeightedAssociation[]> = {
+const BASE_ASSOCIATIONS: Record<string, WeightedAssociation[]> = {
   // AI & Machine Learning (MODERN COVERAGE)
   "neural network": [
     { concept: "brain", distance: 0.2, reason: "biological inspiration" },
@@ -671,6 +680,17 @@ const WEIGHTED_ASSOCIATIONS: Record<string, WeightedAssociation[]> = {
     { concept: "rhythm", distance: 0.5, reason: "regular pattern" },
     { concept: "ritual", distance: 0.6, reason: "prescribed sequence" },
   ],
+};
+
+/**
+ * Merged associations combining base + domain-specific knowledge
+ * This is the primary lookup table used by the semantic drift algorithm
+ */
+const WEIGHTED_ASSOCIATIONS: Record<string, WeightedAssociation[]> = {
+  ...BASE_ASSOCIATIONS,
+  ...MEDICAL_ASSOCIATIONS,
+  ...BUSINESS_ASSOCIATIONS,
+  ...TECHNICAL_ASSOCIATIONS
 };
 
 /**

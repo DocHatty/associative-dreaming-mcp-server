@@ -175,6 +175,196 @@ export class DreamGraph {
   }
   
   /**
+   * Detects communities/clusters using simple edge-weight based clustering
+   * Returns a map of cluster IDs to sets of node IDs
+   */
+  public detectClusters(): Map<string, Set<string>> {
+    const clusters = new Map<string, Set<string>>();
+    const visited = new Set<string>();
+    let clusterID = 0;
+    
+    // Simple connected components with weight threshold
+    for (const node of this.nodes.values()) {
+      if (visited.has(node.id)) continue;
+      
+      const cluster = new Set<string>();
+      this.dfs(node.id, visited, cluster, 0.5); // 0.5 = min edge weight
+      
+      if (cluster.size > 0) {
+        clusters.set(`cluster-${clusterID++}`, cluster);
+      }
+    }
+    
+    return clusters;
+  }
+  
+  /**
+   * DFS helper for cluster detection
+   * Traverses the graph following edges above a minimum weight threshold
+   */
+  private dfs(nodeId: string, visited: Set<string>, cluster: Set<string>, minWeight: number): void {
+    visited.add(nodeId);
+    cluster.add(nodeId);
+    
+    const edges = this.getEdgesFrom(nodeId);
+    for (const edge of edges) {
+      if (!visited.has(edge.target) && edge.weight >= minWeight) {
+        this.dfs(edge.target, visited, cluster, minWeight);
+      }
+    }
+  }
+  
+  /**
+   * Calculates betweenness centrality (simplified)
+   * Measures how many shortest paths pass through this node
+   * Returns a normalized value between 0 and 1
+   */
+  public calculateBetweenness(nodeId: string): number {
+    if (!this.nodes.has(nodeId)) return 0;
+    
+    let betweenness = 0;
+    const allNodes = Array.from(this.nodes.keys());
+    
+    // For each pair of nodes, find if this node is on their shortest path
+    for (let i = 0; i < allNodes.length; i++) {
+      for (let j = i + 1; j < allNodes.length; j++) {
+        const source = allNodes[i];
+        const target = allNodes[j];
+        
+        if (source === nodeId || target === nodeId) continue;
+        
+        const paths = this.findAllShortestPaths(source, target);
+        const pathsThroughNode = paths.filter(path => path.includes(nodeId));
+        
+        if (paths.length > 0) {
+          betweenness += pathsThroughNode.length / paths.length;
+        }
+      }
+    }
+    
+    // Normalize by the maximum possible betweenness
+    const maxPairs = (allNodes.length - 1) * (allNodes.length - 2) / 2;
+    return maxPairs > 0 ? betweenness / maxPairs : 0;
+  }
+  
+  /**
+   * Finds all shortest paths between two nodes (BFS)
+   * Returns an array of paths, where each path is an array of node IDs
+   */
+  private findAllShortestPaths(sourceId: string, targetId: string): string[][] {
+    const queue: Array<{node: string, path: string[]}> = [{node: sourceId, path: [sourceId]}];
+    const visited = new Map<string, number>(); // node -> distance
+    const shortestPaths: string[][] = [];
+    let shortestLength = Infinity;
+    
+    visited.set(sourceId, 0);
+    
+    while (queue.length > 0) {
+      const {node, path} = queue.shift()!;
+      
+      if (node === targetId) {
+        if (path.length < shortestLength) {
+          shortestLength = path.length;
+          shortestPaths.length = 0;
+          shortestPaths.push(path);
+        } else if (path.length === shortestLength) {
+          shortestPaths.push(path);
+        }
+        continue;
+      }
+      
+      if (path.length >= shortestLength) continue;
+      
+      const edges = this.getEdgesFrom(node);
+      for (const edge of edges) {
+        const nextDist = path.length + 1;
+        const prevDist = visited.get(edge.target);
+        
+        if (prevDist === undefined || nextDist <= prevDist) {
+          visited.set(edge.target, nextDist);
+          queue.push({node: edge.target, path: [...path, edge.target]});
+        }
+      }
+    }
+    
+    return shortestPaths;
+  }
+  
+  /**
+   * Finds true bridge nodes connecting different clusters
+   * Returns nodes with their connected clusters and betweenness scores
+   */
+  public findBridgeNodes(): Array<{nodeId: string, connectsClusters: string[], betweenness: number}> {
+    const clusters = this.detectClusters();
+    const bridges: Array<{nodeId: string, connectsClusters: string[], betweenness: number}> = [];
+    
+    // Build reverse map: nodeId -> clusterIds it belongs to
+    const nodeToCluster = new Map<string, string[]>();
+    for (const [clusterID, nodeSet] of clusters.entries()) {
+      for (const nodeId of nodeSet) {
+        if (!nodeToCluster.has(nodeId)) {
+          nodeToCluster.set(nodeId, []);
+        }
+        nodeToCluster.get(nodeId)!.push(clusterID);
+      }
+    }
+    
+    // Find nodes that connect multiple clusters
+    for (const node of this.nodes.values()) {
+      const edges = this.getEdgesFrom(node.id);
+      const connectedClusters = new Set<string>();
+      
+      for (const edge of edges) {
+        const targetClusters = nodeToCluster.get(edge.target) || [];
+        targetClusters.forEach(c => connectedClusters.add(c));
+      }
+      
+      if (connectedClusters.size >= 2) {
+        bridges.push({
+          nodeId: node.id,
+          connectsClusters: Array.from(connectedClusters),
+          betweenness: this.calculateBetweenness(node.id)
+        });
+      }
+    }
+    
+    return bridges.sort((a, b) => b.betweenness - a.betweenness);
+  }
+  
+  /**
+   * Finds structural gaps - concepts that should be connected but aren't
+   * Returns pairs of concepts with reasons why they might be related
+   */
+  public findStructuralGaps(): Array<{concept1: string, concept2: string, reason: string}> {
+    const gaps: Array<{concept1: string, concept2: string, reason: string}> = [];
+    const nodes = Array.from(this.nodes.values());
+    
+    // Look for nodes with similar metadata that aren't connected
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const node1 = nodes[i];
+        const node2 = nodes[j];
+        
+        // Check if they share metadata but no edge
+        const sharedSource = node1.source === node2.source;
+        const similarDrift = Math.abs((node1.driftDistance || 0) - (node2.driftDistance || 0)) < 0.2;
+        const notConnected = !this.getEdgesFrom(node1.id).some(e => e.target === node2.id) &&
+                            !this.getEdgesFrom(node2.id).some(e => e.target === node1.id);
+        
+        if ((sharedSource || similarDrift) && notConnected) {
+          gaps.push({
+            concept1: node1.content,
+            concept2: node2.content,
+            reason: sharedSource ? 'same generation tool' : 'similar semantic distance'
+          });
+        }
+      }
+    }
+    
+    return gaps.slice(0, 10); // Return top 10 gaps
+  }
+  
+  /**
    * Calculates the semantic diversity of the graph
    * Higher values indicate more diverse concepts
    */
