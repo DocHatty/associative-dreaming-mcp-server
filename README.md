@@ -4,74 +4,92 @@
 
 # Associative Dreaming
 
-The yin to sequential thinking's yang
+### What if we stop forcing AI to think A→B→C and let it go A→Banana→Your ex's apartment→Ancient Rome→Answer?
 
-### *Unlock the creative unconscious of your AI*
-
-**Transform linear thinking into breakthrough insights through controlled semantic exploration**
+**The MCP server that deliberately encourages lateral thinking instead of sequential logic chains.**
 
 [![npm version](https://badge.fury.io/js/@associative%2Fserver-associative-dreaming.svg)](https://www.npmjs.com/package/@associative/server-associative-dreaming)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-[Quick Start](#-quick-start) • [Features](#-what-makes-it-extraordinary) • [Tools](#-creative-engines) • [Examples](#-see-it-in-action)
+[The Hypothesis](#-the-hypothesis) • [Quick Start](#-quick-start) • [Tools](#-the-five-engines) • [Examples](#-see-it-in-action) • [Architecture](#-architecture-v20)
 
 </div>
 
 ---
 
-## 🌟 What Makes It Extraordinary
+## 🧠 The Hypothesis
 
-**Associative Dreaming** is the creative counterpart to sequential reasoning—where logic meets imagination, where structure meets serendipity. While traditional AI thinking follows straight lines, this server introduces the **cognitive wandering** that leads to breakthroughs.
+**We've been doing it wrong.**
+
+We impose sequential reasoning on AI because that's how humans think. It's how we *explain* our thinking. But LLMs don't work that way—they naturally operate through **hyperdimensional pattern-matching**, seeing connections across seemingly unrelated concepts in ways we typically suppress.
+
+Think about how breakthroughs actually happen:
+
+- **Gutenberg**: Wine press + coin stamps = printing press
+- **Darwin**: Malthus economics → natural selection  
+- **Velcro**: Burrs stuck to dog fur → hook-and-loop fasteners
+- **PageRank**: Academic citation networks → web search
+
+Innovation happens through **unexpected domain transfer**. Not A→B→C, but A→Banana→Ancient Rome→Answer.
+
+**This MCP server is an experiment**: What if instead of fighting AI's tendency to make wild associative leaps, we *harness* it?
+
+I call it **"controlled ADHD"** or **manufactured serendipity**.
+
+---
+
+## 💥 Why This Exists
+
+Every "reasoning" tool for AI does the same thing: force linear chains. Step 1, Step 2, Step 3. Think carefully. Be logical.
+
+But creativity isn't logical. The best ideas come from:
+- Collisions between unrelated domains
+- Constraints that force new pathways
+- The "adjacent possible" that you weren't looking for
+- Pattern recognition across wildly different contexts
+
+**Associative Dreaming** is the **yin to sequential thinking's yang**. It's your AI's creative unconscious—the part that wanders, connects, and surfaces insights that pure logic would never find.
 
 <table>
 <tr>
 <td width="50%">
 
-### 🕸️ **Neural Concept Networks**
-Move beyond linear thought chains. Your AI maintains an interconnected web of ideas, mirroring how creative minds actually work—through association, not just deduction.
+### 🔗 Sequential Thinking
+```
+Problem → Analysis → Options → Decision
+```
+Good for: Debugging, planning, verification
 
 </td>
 <td width="50%">
 
-### 🎲 **Controlled Serendipity**
-Harness productive randomness. Discover the "adjacent possible" through guided exploration of conceptual territories you didn't know existed.
-
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-### 🔮 **Bisociative Synthesis**
-Arthur Koestler's theory of creativity, implemented. Merge unrelated domains to generate insights that pure logic could never reach—the essence of innovation.
-
-</td>
-<td width="50%">
-
-### ⚡ **Pattern Interruption**
-Break through creative blocks with Brian Eno's Oblique Strategies and SCAMPER techniques. When you're stuck, inject productive constraints.
+### 🌀 Associative Dreaming
+```
+Problem → Jazz → Mycelium → Feudal Japan → Holy shit, that's the answer
+```
+Good for: Innovation, creativity, breakthroughs
 
 </td>
 </tr>
 </table>
 
+**You need both.** This gives you the second one.
+
 ---
 
 ## 🚀 Quick Start
 
-### Instant Launch (Zero Installation)
+### One Command (Seriously)
 
 ```bash
 npx @associative/server-associative-dreaming
 ```
 
-**That's it.** No setup, no configuration files, no dependencies to manage.
+That's it. No installation. No config files. No bullshit.
 
-### Integrate with Your Workflow
+### Add to Claude Desktop
 
-<details>
-<summary><b>📱 Claude Desktop</b></summary>
-
-Add to your `claude_desktop_config.json`:
+Edit your `claude_desktop_config.json`:
 
 ```json
 {
@@ -83,187 +101,280 @@ Add to your `claude_desktop_config.json`:
   }
 }
 ```
-</details>
 
-<details>
-<summary><b>💻 VS Code</b></summary>
+Restart Claude. Ask it to use the associative dreaming tools. Watch what happens.
 
-Add to your MCP configuration:
+### Add to VS Code / Cursor / Zed
 
 ```json
 {
   "servers": {
     "associative-dreaming": {
-      "command": "npx",
+      "command": "npx", 
       "args": ["-y", "@associative/server-associative-dreaming"]
     }
   }
 }
 ```
-</details>
-
-<details>
-<summary><b>🔧 Local Development</b></summary>
-
-```bash
-git clone <repository-url>
-cd associative-dreaming-mcp-server
-npm install
-npm run build
-npm start
-```
-</details>
 
 ---
 
-## 🎨 Creative Engines
+## ⚡ The Five Engines
 
-### `semantic_drift`
-**The Controlled Hallucination Engine**
+### 1. `semantic_drift` — The Controlled Hallucination Engine
 
-Explore the conceptual horizon through intelligent semantic wandering. This isn't about finding synonyms—it's about discovering ideas in the **Serendipity Zone**: distant enough to be surprising, close enough to be relevant.
+Take a concept. Drift away from it through semantic space. Not to synonyms—to the **Serendipity Zone**: distant enough to surprise you, connected enough to matter.
 
 ```typescript
 {
-  anchorConcept: "neural networks",
-  driftMagnitude: 0.6,      // 0 = conservative, 1 = adventurous
-  temperature: 0.7          // add creative randomness
+  anchorConcept: "startup growth",
+  driftMagnitude: 0.8,    // 0 = stay close, 1 = go wild
+  temperature: 0.7        // randomness in the journey
 }
 ```
 
-**Perfect for:** Breaking out of obvious associations • Finding unexpected angles • Divergent thinking sessions
+**What you get**: A destination concept + the reasoning chain that got you there + why this reframes your original thinking.
+
+**Use when**: You're stuck in obvious associations. You need fresh angles. The direct approach isn't working.
 
 ---
 
-### `bisociative_synthesis`
-**The Combinatorial Innovation Engine**
+### 2. `bisociative_synthesis` — The Collision Engine
 
-Force the collision of unrelated domains to generate breakthrough insights. Based on Arthur Koestler's *The Act of Creation*, this tool finds **structural patterns** in one domain and maps them onto your problem space.
+Arthur Koestler's theory of creativity, weaponized. Take two unrelated domains. Smash them together. Find the **structural isomorphism**—the hidden pattern that exists in both.
 
 ```typescript
 {
-  matrixA: "user interface design",
-  matrixB: "jazz improvisation",   // leave blank for auto-selection
-  blendType: "metaphoric"          // optional: guide the synthesis
+  matrixA: "enterprise sales",
+  matrixB: "jazz improvisation"    // leave blank for auto-selection
 }
 ```
 
-**Perfect for:** Innovation challenges • Creative problem-solving • Cross-domain insight discovery
+**What you get**: Not "sales is like jazz" (useless). Instead: the specific structural patterns that map between domains, why they map, and what that reveals about your problem.
+
+**Use when**: You need radical innovation, not incremental improvement. You want to import paradigms from other fields.
 
 ---
 
-### `oblique_constraint`
-**The Pattern Interrupt Engine**
+### 3. `oblique_constraint` — The Pattern Interrupt Engine
 
-When you're stuck in a mental loop, inject a creative constraint to force new pathways. Implements **Brian Eno's Oblique Strategies** and **SCAMPER techniques** to break rigid thinking patterns.
+Brian Eno's Oblique Strategies + SCAMPER, with actual application guidance. When you're stuck, inject a constraint that forces new pathways.
 
 ```typescript
 {
-  currentBlock: "Our product is feature-complete but users aren't engaged",
-  constraintType: "oblique"        // oblique | scamper | creative | random
+  currentBlock: "Users sign up but don't activate",
+  constraintType: "oblique"    // oblique | scamper | inversion | creative
 }
 ```
 
-**Perfect for:** Creative blocks • Decision paralysis • Stale thinking patterns
+**What you get**: A specific constraint + WHY it's relevant to your block + HOW to apply it + what might emerge.
+
+**Use when**: Creative block. Decision paralysis. You've been staring at the same problem too long.
 
 ---
 
-### `serendipity_scan`
-**The Unknown Unknown Finder**
+### 4. `serendipity_scan` — The Unknown Unknown Finder
 
-Automate the search for what you don't know you're missing. Analyzes your concept network for **structural holes**, **disconnected clusters**, and **latent patterns**, then surfaces surprising connections.
+Find what you don't know you're looking for. Works even with zero prior context—mines your input for concepts, generates exploration probes, surfaces surprising connections.
 
 ```typescript
 {
-  currentContext: "Exploring AI-enhanced creativity workflows",
-  noveltyThreshold: 0.7,           // 0 = safe, 1 = wild
-  scanType: "bridge"               // bridge | gap | pattern | random
+  currentContext: "We're building AI tools for creative professionals",
+  noveltyThreshold: 0.8,    // 0 = safe, 1 = weird
+  scanType: "gap"           // bridge | gap | pattern | random
 }
 ```
 
-**Perfect for:** Research • Strategic planning • Finding hidden opportunities
+**What you get**: A discovered concept + the associative chain that found it + why it matters + new threads to pull.
+
+**Use when**: Exploration mode. Research. You want to discover blind spots in your thinking.
 
 ---
 
-## 💡 See It in Action
+### 5. `meta_association` — The Chaos Weaver
 
-### Scenario: Breaking Through a Design Impasse
+The amplifier. Takes outputs from the other tools and forces them to **collide**. If semantic_drift makes one wild leap, meta_association makes wild leaps *between* the wild leaps.
+
+```typescript
+{
+  priorOutputs: [/* results from other tools */],
+  chaosIntensity: 0.8,
+  contextAnchor: "my original problem"    // optional grounding
+}
+```
+
+**What you get**: Collision points between concepts + emergent meta-patterns + the weirdest justified connection + practical extraction from the chaos.
+
+**Use when**: You've run multiple tools and want to see what emerges from forcing them together. Maximum lateral force required.
+
+---
+
+## 🎯 See It In Action
+
+### "Our checkout is too slow but we can't remove steps"
 
 ```json
-// You're redesigning an e-commerce checkout flow
-{
-  "tool": "oblique_constraint",
-  "input": {
-    "currentBlock": "Our checkout needs to be fast but also build trust",
-    "constraintType": "oblique"
-  }
-}
-```
-
-**Response:** *"Honor thy error as a hidden intention"* → Leads to exploring how checkout "mistakes" could reveal user intent and improve the experience.
-
----
-
-### Scenario: Finding Your Blue Ocean
-
-```json
-// Your SaaS is in a crowded market
 {
   "tool": "bisociative_synthesis",
   "input": {
-    "matrixA": "project management software",
-    "matrixB": "improvisational theater"
+    "matrixA": "e-commerce checkout optimization",
+    "matrixB": "emergency room triage"
   }
 }
 ```
 
-**Response:** Maps the principles of "Yes, and..." and adaptive collaboration onto PM tools, leading to a novel real-time collaborative planning approach.
+**Output**: ER triage doesn't make the process faster—it makes waiting *feel* purposeful by showing progress and priority. Maps to: progress indicators that show *why* each step matters, not just that it exists. The friction becomes value demonstration.
 
 ---
 
-### Scenario: Research Discovery
+### "We're a B2B SaaS in a crowded market"
 
 ```json
-// You're exploring emerging trends
 {
   "tool": "serendipity_scan",
   "input": {
-    "currentContext": "Future of remote work collaboration",
+    "currentContext": "B2B project management tool competing with Monday, Asana, Notion",
     "scanType": "gap",
-    "noveltyThreshold": 0.8
+    "noveltyThreshold": 0.9
   }
 }
 ```
 
-**Response:** Identifies an unexplored connection between asynchronous communication patterns and musical polyrhythms.
+**Output**: Discovers that all competitors optimize for the *manager's* view. Gap: tools that optimize for the IC's experience of being managed. The asymmetry is the opportunity.
 
 ---
 
-## 🧠 The Philosophy
+### "I've been staring at this architecture decision for 3 days"
 
-**Associative Dreaming** embodies the **Yin** to Sequential Thinking's **Yang**:
+```json
+{
+  "tool": "oblique_constraint",
+  "input": {
+    "currentBlock": "Can't decide between microservices and monolith",
+    "constraintType": "inversion"
+  }
+}
+```
 
-| Sequential Thinking | Associative Dreaming |
-|:---:|:---:|
-| Convergent | **Divergent** |
-| Logical | **Intuitive** |
-| Linear | **Networked** |
-| Deductive | **Abductive** |
-| Answers | **Questions** |
+**Output**: "What if the architecture was *designed* to be thrown away in 18 months?" Reveals: you're optimizing for a future you can't predict. The decision paralysis is about false permanence.
 
-Great breakthroughs require both. This server gives your AI the ability to **wander productively**, to make **non-obvious connections**, and to **discover what wasn't being searched for**.
+---
+
+## 🏗️ Architecture (V2.0)
+
+### The Key Insight
+
+**The MCP server doesn't try to be creative.** Creativity happens in the LLM. The server provides **scaffolding**—structured prompts that guide Claude's natural hyperdimensional pattern-matching toward productive lateral thinking.
+
+Old approach (wrong):
+```
+Server generates: "throughput ⟷ tension" (meaningless template)
+```
+
+New approach (V2.0):
+```
+Server generates: Structured prompt with constraints, response sections, and "because chain" requirements
+Claude generates: Actual insight with traceable reasoning
+```
+
+### What Each Tool Returns
+
+Every tool returns an **LLM Scaffold**:
+
+```
+═══════════════════════════════════════════════════════════════
+  BISOCIATIVE SYNTHESIS - LLM SCAFFOLD OUTPUT  
+═══════════════════════════════════════════════════════════════
+
+[Explanation of what this tool does]
+
+───────────────────────────────────────────────────────────────
+  LLM PROMPT (Process this for genuine insight)
+───────────────────────────────────────────────────────────────
+
+[Carefully crafted prompt with:]
+- The specific task
+- Required response sections (structural_insight, because_chain, concrete_application, etc.)
+- Constraints that ensure output is USEFUL, not just weird
+- Context grounding
+
+───────────────────────────────────────────────────────────────
+  KEY DATA
+───────────────────────────────────────────────────────────────
+
+[Structured metadata for programmatic access]
+```
+
+### The "Because Chain" Requirement
+
+Every connection must be **traceable**. No more "this is weird, therefore creative." Every leap requires:
+
+1. **The connection itself**
+2. **Why this connection exists** (step by step)
+3. **What it reveals** about the original problem
+4. **Concrete application** to user's context
+
+Weirdness in service of insight, not weirdness for performance.
+
+---
+
+## 🔬 The Philosophy
+
+| What We're Told | What Actually Works |
+|:---|:---|
+| "Think step by step" | Sometimes the step you need is sideways |
+| "Be logical" | Logic finds what you're looking for; association finds what you're not |
+| "Stay focused" | Peripheral vision catches what direct gaze misses |
+| "Avoid tangents" | The tangent IS the insight |
+
+**Associative Dreaming** gives your AI permission to wander. Productively. With guardrails that ensure the wandering leads somewhere useful.
+
+### The Rhizomatic Dream Graph
+
+Under the hood, the server maintains a **concept graph** that grows with each tool call:
+- Nodes are concepts (anchors, destinations, bridges, discoveries)
+- Edges are typed relationships (METAPHOR_FOR, CONTRASTS_WITH, REMINDS_OF, SYNTHESIZED_FROM, etc.)
+- Clusters form naturally as related concepts accumulate
+- Bridge nodes connect disparate clusters
+- Structural holes reveal unexplored territory
+
+This isn't just logging—it's a **map of the creative exploration** that can be queried, visualized, and built upon.
 
 ---
 
 ## 🛠️ Development
 
-### Watch Mode
 ```bash
+# Clone and install
+git clone <repository-url>
+cd associative-dreaming-mcp-server
+npm install
+
+# Build
+npm run build
+
+# Run
+npm start
+
+# Watch mode
 npm run build:watch
 ```
 
 ### Environment Variables
-- `DISABLE_DREAM_LOGGING` — Set to `"true"` to disable execution logging
+
+| Variable | Description |
+|----------|-------------|
+| `DISABLE_DREAM_LOGGING` | Set to `"true"` to suppress console output |
+
+---
+
+## 📚 References & Inspiration
+
+- **Arthur Koestler** — *The Act of Creation* (bisociation theory)
+- **Brian Eno** — *Oblique Strategies* (creative constraints)
+- **Stuart Kauffman** — *The Adjacent Possible* (innovation spaces)
+- **Deleuze & Guattari** — *A Thousand Plateaus* (rhizomatic thinking)
+- **Douglas Hofstadter** — *Fluid Concepts and Creative Analogies*
 
 ---
 
@@ -275,8 +386,12 @@ MIT License - See [LICENSE](LICENSE) for details
 
 <div align="center">
 
-**Built for creators, researchers, and anyone who believes the best ideas come from unexpected places**
+### The best ideas don't come from thinking harder. They come from thinking *different*.
+
+**What unexpected connection will you find today?**
 
 [Report Bug](../../issues) • [Request Feature](../../issues) • [Contribute](CONTRIBUTING.md)
+
+*Built for the creatively impatient*
 
 </div>
