@@ -4,7 +4,7 @@
 
 # Associative Dreaming
 
-### What if we stop forcing AI to think A→B→C and let it go A→Banana→Your ex's apartment→Ancient Rome→Answer?
+**The yin to Sequential Thinking's yang**
 
 **The MCP server that deliberately encourages lateral thinking instead of sequential logic chains.**
 
