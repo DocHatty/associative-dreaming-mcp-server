@@ -481,14 +481,11 @@ export interface BisociativeSynthesisOutput {
   /** Formatted prompt ready for Claude to process */
   llmPrompt: string;
 
-  /** Bridge concept (placeholder until LLM fills it) */
-  bridgeConcept: string;
-
   /** The two domains being connected */
   matrixA: string;
   matrixB: string;
 
-  /** Suggested structural pattern */
+  /** Suggested structural pattern for exploration */
   suggestedPattern: string;
 
   /** Pattern hints to guide the LLM */
@@ -539,13 +536,6 @@ export class BisociativeSynthesisTool {
     // Format the scaffold as a prompt
     const llmPrompt = formatScaffoldAsPrompt(scaffold);
 
-    // Generate a provisional bridge concept (will be replaced by LLM)
-    const provisionalBridge = this.generateProvisionalBridge(
-      matrixA,
-      selectedMatrixB,
-      patternInfo.name,
-    );
-
     // Create explanation
     const explanation = this.createExplanation(
       matrixA,
@@ -553,18 +543,12 @@ export class BisociativeSynthesisTool {
       patternInfo,
     );
 
-    // Update graph with the domains (not the insight - that comes from LLM)
-    this.updateDreamGraph(
-      matrixA,
-      selectedMatrixB,
-      patternInfo.name,
-      provisionalBridge,
-    );
+    // Update graph with scaffold metadata (not fake concepts)
+    this.updateDreamGraph(matrixA, selectedMatrixB, patternInfo.name);
 
     return {
       scaffold,
       llmPrompt,
-      bridgeConcept: provisionalBridge,
       matrixA,
       matrixB: selectedMatrixB,
       suggestedPattern: patternInfo.name,
@@ -655,23 +639,6 @@ export class BisociativeSynthesisTool {
   }
 
   /**
-   * Generate a provisional bridge concept
-   * This is just a placeholder - the REAL insight comes from the LLM
-   */
-  private generateProvisionalBridge(
-    domainA: string,
-    domainB: string,
-    patternName: string,
-  ): string {
-    const templates = [
-      `[PENDING LLM INSIGHT] ${capitalize(domainA)} viewed through ${domainB}'s ${patternName} structure`,
-      `[PENDING LLM INSIGHT] The ${patternName} of ${domainB} applied to ${domainA}`,
-      `[PENDING LLM INSIGHT] ${capitalize(domainA)} × ${capitalize(domainB)} → (awaiting structural insight)`,
-    ];
-    return templates[Math.floor(Math.random() * templates.length)];
-  }
-
-  /**
    * Create explanation of what the output means
    */
   private createExplanation(
@@ -706,20 +673,19 @@ The scaffold ensures the creative leap is TRACEABLE and USEFUL, not just weird.`
   }
 
   /**
-   * Updates the dream graph
+   * Updates the dream graph with scaffold metadata
+   * Records the domains and scaffold, not fake concepts
    */
   private updateDreamGraph(
     domainA: string,
     domainB: string,
     patternName: string,
-    bridgeConcept: string,
   ): void {
     const timestamp = Date.now();
-    const rand = Math.floor(Math.random() * 10000);
 
-    const domainAId = `bisoc-domainA-${timestamp}-${rand}`;
-    const domainBId = `bisoc-domainB-${timestamp}-${rand}`;
-    const bridgeId = `bisoc-bridge-${timestamp}-${rand}`;
+    const domainAId = `bisoc-domainA-${timestamp}`;
+    const domainBId = `bisoc-domainB-${timestamp}`;
+    const scaffoldId = `bisoc-scaffold-${timestamp}`;
 
     try {
       this.dreamGraph.addNode({
@@ -746,27 +712,25 @@ The scaffold ensures the creative leap is TRACEABLE and USEFUL, not just weird.`
     }
 
     try {
+      // Add scaffold metadata (not a fake bridge)
       this.dreamGraph.addNode({
-        id: bridgeId,
-        content: bridgeConcept,
+        id: scaffoldId,
+        content: `Bisociative scaffold: ${domainA} × ${domainB} via ${patternName}`,
         creationTimestamp: timestamp,
         source: "bisociative_synthesis",
         metadata: {
-          role: "bridge_concept",
+          role: "scaffold",
+          type: "bisociative_synthesis",
           pattern: patternName,
           domains: [domainA, domainB],
-          isPending: true, // Marked as pending until LLM fills in
+          isScaffold: true, // This is a scaffold, not a concept
         },
       });
-    } catch (error) {
-      console.error("Error adding bridge node:", error);
-    }
 
-    // Create edges
-    try {
+      // Create edges from domains to scaffold
       this.dreamGraph.addEdge({
         source: domainAId,
-        target: bridgeId,
+        target: scaffoldId,
         type: EdgeType.SYNTHESIZED_FROM,
         weight: 0.8,
         metadata: { pattern: patternName, role: "problem_domain" },
@@ -774,19 +738,15 @@ The scaffold ensures the creative leap is TRACEABLE and USEFUL, not just weird.`
 
       this.dreamGraph.addEdge({
         source: domainBId,
-        target: bridgeId,
+        target: scaffoldId,
         type: EdgeType.SYNTHESIZED_FROM,
         weight: 0.8,
         metadata: { pattern: patternName, role: "stimulus_domain" },
       });
-    } catch (error) {
-      console.error("Error adding edges:", error);
-    }
 
-    try {
-      this.dreamGraph.visitNode(bridgeId);
+      this.dreamGraph.visitNode(scaffoldId);
     } catch (error) {
-      // Silent
+      // Silently ignore graph errors (non-critical)
     }
   }
 }

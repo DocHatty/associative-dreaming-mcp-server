@@ -263,11 +263,11 @@ export interface SemanticDriftOutput {
   /** Formatted prompt ready for Claude to process */
   llmPrompt: string;
 
-  /** The destination concept (placeholder or hint-based suggestion) */
-  newConcept: string;
+  /** Suggested direction for drift exploration (guidance, not a result) */
+  suggestedDirection: string;
 
-  /** Suggested drift path (hints for LLM) */
-  driftPath: string[];
+  /** Exploration path with guidance (hints for LLM) */
+  explorationPath: string[];
 
   /** Target drift distance */
   driftDistance: number;
@@ -322,14 +322,13 @@ export class SemanticDriftTool {
     // Format as prompt
     const llmPrompt = formatScaffoldAsPrompt(scaffold);
 
-    // Generate provisional concept based on hints
-    const { provisionalConcept, provisionalPath } =
-      this.generateProvisionalDrift(
-        anchorConcept,
-        driftMagnitude,
-        associationHints,
-        bridgeSuggestions,
-      );
+    // Generate suggested direction based on hints (NOT a fake result)
+    const { suggestedDirection, explorationPath } = this.generateDriftGuidance(
+      anchorConcept,
+      driftMagnitude,
+      associationHints,
+      bridgeSuggestions,
+    );
 
     // Create explanation
     const explanation = this.createExplanation(
@@ -340,19 +339,19 @@ export class SemanticDriftTool {
       bridgeSuggestions,
     );
 
-    // Update dream graph
+    // Update dream graph with scaffold metadata (not fake concepts)
     this.updateDreamGraph(
       anchorConcept,
-      provisionalConcept,
-      provisionalPath,
+      suggestedDirection,
+      explorationPath,
       driftMagnitude,
     );
 
     return {
       scaffold,
       llmPrompt,
-      newConcept: provisionalConcept,
-      driftPath: provisionalPath,
+      suggestedDirection, // HONEST: This is a suggestion, not a result
+      explorationPath,
       driftDistance: driftMagnitude,
       associationHints,
       bridgeSuggestions,
@@ -490,34 +489,35 @@ export class SemanticDriftTool {
   }
 
   /**
-   * Generate provisional drift result based on hints
+   * Generate suggested drift direction based on hints
+   * Returns guidance, not fake results
    */
-  private generateProvisionalDrift(
+  private generateDriftGuidance(
     anchor: string,
     driftMagnitude: number,
     hints: AssociationHint[],
     bridges: string[],
-  ): { provisionalConcept: string; provisionalPath: string[] } {
+  ): { suggestedDirection: string; explorationPath: string[] } {
     const path = [anchor];
 
-    // For high drift, use bridges
+    // For high drift, suggest bridge exploration
     if (driftMagnitude > 0.7 && bridges.length > 0) {
-      const bridge = bridges[Math.floor(Math.random() * bridges.length)];
-      path.push(`[via cross-domain bridge: ${bridge}]`);
+      const bridge = bridges[0]; // Use first, not random
+      path.push(`Consider cross-domain bridge: ${bridge}`);
       return {
-        provisionalConcept: `[PENDING LLM LEAP] High-magnitude drift (${(driftMagnitude * 100).toFixed(0)}%) - awaiting cross-domain connection`,
-        provisionalPath: path,
+        suggestedDirection: `High-magnitude drift (${(driftMagnitude * 100).toFixed(0)}%) - explore cross-domain connections like: ${bridge}`,
+        explorationPath: path,
       };
     }
 
     // For medium drift, use hints
     if (hints.length > 0) {
-      const hint = hints[Math.floor(Math.random() * hints.length)];
-      path.push(`[${hint.direction}]`);
-      path.push(hint.concept);
+      const hint = hints[0]; // Use first, not random
+      path.push(`Direction: ${hint.direction}`);
+      path.push(`Suggestion: ${hint.concept}`);
       return {
-        provisionalConcept: `[PENDING LLM LEAP] "${anchor}" → ${hint.concept} (${hint.direction})`,
-        provisionalPath: path,
+        suggestedDirection: `"${anchor}" explored ${hint.direction} toward concepts like "${hint.concept}"`,
+        explorationPath: path,
       };
     }
 
@@ -529,8 +529,8 @@ export class SemanticDriftTool {
           ? "moderate"
           : "distant";
     return {
-      provisionalConcept: `[PENDING LLM LEAP] Seeking ${distanceDesc} semantic neighbor of "${anchor}"`,
-      provisionalPath: [anchor, `[${distanceDesc} drift target]`],
+      suggestedDirection: `Seeking ${distanceDesc} semantic neighbors of "${anchor}" (${(driftMagnitude * 100).toFixed(0)}% drift)`,
+      explorationPath: [anchor, `Target: ${distanceDesc} drift exploration`],
     };
   }
 
@@ -590,19 +590,21 @@ The 'llmPrompt' field contains a complete prompt that will generate:
   }
 
   /**
-   * Update dream graph with drift
+   * Update dream graph with scaffold metadata
+   * Records the prompt/scaffold, not fake results
    */
   private updateDreamGraph(
     anchor: string,
-    newConcept: string,
-    driftPath: string[],
-    avgDistance: number,
+    suggestedDirection: string,
+    explorationPath: string[],
+    driftMagnitude: number,
   ): void {
     const timestamp = Date.now();
-    const anchorId = `drift-anchor-${timestamp}-${Math.floor(Math.random() * 10000)}`;
-    const newConceptId = `drift-result-${timestamp}-${Math.floor(Math.random() * 10000)}`;
+    const anchorId = `drift-anchor-${timestamp}`;
+    const scaffoldId = `drift-scaffold-${timestamp}`;
 
     try {
+      // Add anchor concept
       this.dreamGraph.addNode({
         id: anchorId,
         content: anchor,
@@ -610,7 +612,7 @@ The 'llmPrompt' field contains a complete prompt that will generate:
         source: "semantic_drift",
         metadata: {
           role: "anchor",
-          pathLength: driftPath.length,
+          driftMagnitude,
         },
       });
     } catch (error) {
@@ -618,44 +620,38 @@ The 'llmPrompt' field contains a complete prompt that will generate:
     }
 
     try {
+      // Add scaffold metadata (not a fake concept)
       this.dreamGraph.addNode({
-        id: newConceptId,
-        content: newConcept,
+        id: scaffoldId,
+        content: `Semantic drift scaffold: ${suggestedDirection}`,
         creationTimestamp: timestamp,
-        driftDistance: avgDistance,
         source: "semantic_drift",
         metadata: {
-          role: "drifted_concept",
-          driftPath,
+          role: "scaffold",
+          type: "semantic_drift",
           anchorConcept: anchor,
-          avgDistance,
-          isPending: true, // Marked as pending until LLM fills in
+          driftMagnitude,
+          explorationPath,
+          isScaffold: true, // This is a scaffold, not a concept
         },
       });
-    } catch (error) {
-      // Ignore errors
-    }
 
-    try {
+      // Link anchor to scaffold
       this.dreamGraph.addEdge({
         source: anchorId,
-        target: newConceptId,
+        target: scaffoldId,
         type: EdgeType.TRANSFORMS_INTO,
-        weight: 1.0 - avgDistance,
+        weight: 1.0 - driftMagnitude,
         metadata: {
-          driftPath,
-          pathLength: driftPath.length,
-          avgDistance,
+          explorationPath,
+          driftMagnitude,
+          scaffoldType: "semantic_drift",
         },
       });
-    } catch (error) {
-      // Ignore errors
-    }
 
-    try {
-      this.dreamGraph.visitNode(newConceptId);
+      this.dreamGraph.visitNode(scaffoldId);
     } catch (error) {
-      // Ignore errors
+      // Silently ignore graph errors (non-critical)
     }
   }
 }
