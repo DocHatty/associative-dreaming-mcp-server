@@ -23,12 +23,10 @@ export interface BisociativeSynthesisOutput {
     scaffold: CreativeScaffold;
     /** Formatted prompt ready for Claude to process */
     llmPrompt: string;
-    /** Bridge concept (placeholder until LLM fills it) */
-    bridgeConcept: string;
     /** The two domains being connected */
     matrixA: string;
     matrixB: string;
-    /** Suggested structural pattern */
+    /** Suggested structural pattern for exploration */
     suggestedPattern: string;
     /** Pattern hints to guide the LLM */
     patternHints: string[];
@@ -52,16 +50,12 @@ export declare class BisociativeSynthesisTool {
      */
     private identifyPattern;
     /**
-     * Generate a provisional bridge concept
-     * This is just a placeholder - the REAL insight comes from the LLM
-     */
-    private generateProvisionalBridge;
-    /**
      * Create explanation of what the output means
      */
     private createExplanation;
     /**
-     * Updates the dream graph
+     * Updates the dream graph with scaffold metadata
+     * Records the domains and scaffold, not fake concepts
      */
     private updateDreamGraph;
 }
