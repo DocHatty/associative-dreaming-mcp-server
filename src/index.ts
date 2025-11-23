@@ -21,6 +21,7 @@ import {
   Prompt,
 } from "@modelcontextprotocol/sdk/types.js";
 import { AssociativeDreamingServer } from "./lib.js";
+import { log, logError } from "./utils/logger.js";
 
 // Define the four core tools of Associative Dreaming
 const SEMANTIC_DRIFT_TOOL: Tool = {
@@ -944,10 +945,10 @@ After the full sequence, present:
 async function runServer() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("Associative Dreaming MCP Server running on stdio");
+  log("info", "Associative Dreaming MCP Server running on stdio");
 }
 
 runServer().catch((error) => {
-  console.error("Fatal error running server:", error);
+  logError(error, { scope: "startup" });
   process.exit(1);
 });
