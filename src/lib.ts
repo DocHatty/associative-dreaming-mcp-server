@@ -20,7 +20,6 @@
  * in TypeScript with lookup tables.
  */
 
-import chalk from "chalk";
 import { DreamGraph } from "./graph.js";
 import { SemanticDriftTool } from "./tools/semantic-drift.js";
 import { BisociativeSynthesisTool } from "./tools/bisociative-synthesis.js";
@@ -34,6 +33,7 @@ import {
   wrapError,
   isDreamError,
 } from "./utils/errors.js";
+import { log } from "./utils/logger.js";
 import {
   validateToolInput,
   ToolName,
@@ -337,65 +337,21 @@ export class AssociativeDreamingServer {
    * Logs dream tool executions with colorized output
    */
   private logDream(toolName: string, result: any): void {
-    const config = getConfig();
-
-    let prefix = "";
-    let border = "";
-
-    if (config.logging.colorized) {
-      switch (toolName) {
-        case "semantic_drift":
-          prefix = chalk.blue("DRIFT");
-          border = "~".repeat(40);
-          break;
-        case "bisociative_synthesis":
-          prefix = chalk.magenta("SYNTHESIS");
-          border = "*".repeat(40);
-          break;
-        case "oblique_constraint":
-          prefix = chalk.yellow("CONSTRAINT");
-          border = "=".repeat(40);
-          break;
-        case "serendipity_scan":
-          prefix = chalk.green("SERENDIPITY");
-          border = "+".repeat(40);
-          break;
-        case "meta_association":
-          prefix = chalk.cyan("META-ASSOCIATION");
-          border = "⚡".repeat(40);
-          break;
-        default:
-          prefix = chalk.white("UNKNOWN TOOL");
-          border = "-".repeat(40);
-      }
-    } else {
-      prefix = toolName.toUpperCase();
-      border = "-".repeat(40);
-    }
+    const prefix = toolName.toUpperCase().replace("_", " ");
 
     // Format a summary of the result
-    let summary = "";
-    if (result.llmPrompt) {
-      summary = `LLM scaffold generated (${result.llmPrompt.length} chars)`;
-    } else {
-      summary = "Result: " + JSON.stringify(result).substring(0, 100) + "...";
-    }
+    const summary = result.llmPrompt
+      ? `LLM scaffold generated (${result.llmPrompt.length} chars)`
+      : `Result: ${JSON.stringify(result).substring(0, 100)}...`;
 
-    // Build log message
-    const timestamp = config.logging.includeTimestamp
-      ? `[${new Date().toISOString()}] `
-      : "";
+    log("info", `${prefix} | ${summary}`, { tool: toolName });
 
-    console.error(`
-${border}
-${timestamp}${prefix} | ${summary}
-${border}`);
-
-    // Graph statistics
     const graphStats = this.getDreamGraphStatistics();
-    console.error(
-      `Dream Graph: ${graphStats.nodeCount} nodes, ${graphStats.edgeCount} edges, ${graphStats.diversity.toFixed(2)} diversity`,
-    );
+    log("debug", "Dream graph updated", {
+      nodeCount: graphStats.nodeCount,
+      edgeCount: graphStats.edgeCount,
+      diversity: Number(graphStats.diversity.toFixed(2)),
+    });
   }
 
   /**
