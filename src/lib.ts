@@ -337,7 +337,7 @@ export class AssociativeDreamingServer {
    * Logs dream tool executions with colorized output
    */
   private logDream(toolName: string, result: any): void {
-    const prefix = toolName.toUpperCase().replace("_", " ");
+    const prefix = toolName.toUpperCase().replaceAll("_", " ");
 
     // Format a summary of the result
     const summary = result.llmPrompt
