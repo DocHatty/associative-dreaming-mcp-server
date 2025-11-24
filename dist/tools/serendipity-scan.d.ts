@@ -1,16 +1,11 @@
 /**
  * Serendipity Scan - The Unknown Unknown Finder (V4.0 - PHASE 1 INTEGRATED)
  *
- * MAJOR UPGRADE FROM V3.0:
+ * ✅ FIXED: All TypeScript errors resolved
  * ✅ Real NLP concept extraction (compromise + natural + stopword)
- * ✅ Transparency reporting (honest about computation vs. LLM work)
- * ✅ Grounded confidence scores (no more fake numbers)
- * ✅ Full provenance tracking for every extraction
- *
- * This tool automates the search for "Unknown Unknowns" - connections and insights
- * that would typically be missed through linear thinking.
- *
- * NOW WORKS ON EMPTY GRAPHS - mines user context directly using real NLP.
+ * ✅ Transparency reporting
+ * ✅ Honest serendipity scoring
+ * ✅ Works on empty graphs using real NLP
  */
 import { DreamGraph } from "../graph.js";
 import { CreativeScaffold } from "../prompts/creative-scaffolds.js";
@@ -40,9 +35,6 @@ export interface SerendipityScanOutput {
     };
     transparency: TransparencyReport;
 }
-/**
- * The Serendipity Scan tool (V4.0 - PHASE 1 INTEGRATED)
- */
 export declare class SerendipityScanTool {
     private dreamGraph;
     constructor(dreamGraph: DreamGraph);

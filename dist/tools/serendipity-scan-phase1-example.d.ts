@@ -10,8 +10,8 @@
  */
 import { DreamGraph } from "../graph.js";
 import { CreativeScaffold } from "../prompts/creative-scaffolds.js";
-import { ConceptExtractionResult } from '../utils/concept-extractor.js';
-import { TransparencyReport } from '../utils/transparency.js';
+import { ConceptExtractionResult } from "../utils/concept-extractor.js";
+import { TransparencyReport } from "../utils/transparency.js";
 export interface SerendipityScanInput {
     context: string;
     scanType?: "bridge" | "gap" | "pattern" | "random";

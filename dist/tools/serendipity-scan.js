@@ -1,16 +1,11 @@
 /**
  * Serendipity Scan - The Unknown Unknown Finder (V4.0 - PHASE 1 INTEGRATED)
  *
- * MAJOR UPGRADE FROM V3.0:
+ * ✅ FIXED: All TypeScript errors resolved
  * ✅ Real NLP concept extraction (compromise + natural + stopword)
- * ✅ Transparency reporting (honest about computation vs. LLM work)
- * ✅ Grounded confidence scores (no more fake numbers)
- * ✅ Full provenance tracking for every extraction
- *
- * This tool automates the search for "Unknown Unknowns" - connections and insights
- * that would typically be missed through linear thinking.
- *
- * NOW WORKS ON EMPTY GRAPHS - mines user context directly using real NLP.
+ * ✅ Transparency reporting
+ * ✅ Honest serendipity scoring
+ * ✅ Works on empty graphs using real NLP
  */
 import { EdgeType } from "../graph.js";
 import { generateSerendipityMiningScaffold, formatScaffoldAsPrompt, } from "../prompts/creative-scaffolds.js";
@@ -21,101 +16,35 @@ import { createTransparencyReport, computeHonestConfidence } from '../utils/tran
 const SEED_DOMAINS = [
     {
         name: "structural",
-        probes: [
-            "What underlying structure does this have?",
-            "What patterns repeat?",
-            "What's the hierarchy?",
-        ],
-        concepts: [
-            "architecture",
-            "framework",
-            "layers",
-            "modules",
-            "dependencies",
-            "flow",
-        ],
+        probes: ["What underlying structure does this have?", "What patterns repeat?", "What's the hierarchy?"],
+        concepts: ["architecture", "framework", "layers", "modules", "dependencies", "flow"],
     },
     {
         name: "temporal",
-        probes: [
-            "What changes over time?",
-            "What are the phases?",
-            "What cycles exist?",
-        ],
-        concepts: [
-            "lifecycle",
-            "evolution",
-            "rhythm",
-            "seasons",
-            "decay",
-            "growth",
-            "momentum",
-        ],
+        probes: ["What changes over time?", "What are the phases?", "What cycles exist?"],
+        concepts: ["lifecycle", "evolution", "rhythm", "seasons", "decay", "growth", "momentum"],
     },
     {
         name: "relational",
-        probes: [
-            "What connects to what?",
-            "What depends on what?",
-            "Who affects whom?",
-        ],
-        concepts: [
-            "network",
-            "ecosystem",
-            "symbiosis",
-            "competition",
-            "collaboration",
-            "hierarchy",
-        ],
+        probes: ["What connects to what?", "What depends on what?", "Who affects whom?"],
+        concepts: ["network", "ecosystem", "symbiosis", "competition", "collaboration", "hierarchy"],
     },
     {
         name: "transformational",
-        probes: [
-            "What transforms into what?",
-            "What's the input/output?",
-            "What catalyzes change?",
-        ],
-        concepts: [
-            "catalyst",
-            "threshold",
-            "metamorphosis",
-            "conversion",
-            "emergence",
-            "crystallization",
-        ],
+        probes: ["What transforms into what?", "What's the input/output?", "What catalyzes change?"],
+        concepts: ["catalyst", "threshold", "metamorphosis", "conversion", "emergence", "crystallization"],
     },
     {
         name: "oppositional",
         probes: ["What's the opposite?", "What's in tension?", "What's missing?"],
-        concepts: [
-            "shadow",
-            "complement",
-            "paradox",
-            "absence",
-            "void",
-            "negative space",
-        ],
+        concepts: ["shadow", "complement", "paradox", "absence", "void", "negative space"],
     },
     {
         name: "analogical",
-        probes: [
-            "What else works like this?",
-            "Where have I seen this pattern?",
-            "What's this a metaphor for?",
-        ],
-        concepts: [
-            "isomorphism",
-            "parallel",
-            "mirror",
-            "translation",
-            "mapping",
-            "correspondence",
-        ],
+        probes: ["What else works like this?", "Where have I seen this pattern?", "What's this a metaphor for?"],
+        concepts: ["isomorphism", "parallel", "mirror", "translation", "mapping", "correspondence"],
     },
 ];
-/**
- * The Serendipity Scan tool (V4.0 - PHASE 1 INTEGRATED)
- */
 export class SerendipityScanTool {
     dreamGraph;
     constructor(dreamGraph) {
@@ -123,7 +52,6 @@ export class SerendipityScanTool {
     }
     performScan(input) {
         const { currentContext, noveltyThreshold = 0.7, scanType = "random", } = input;
-        // ✅ Create transparency tracker
         const transparency = createTransparencyReport('serendipity-scan');
         if (!currentContext || currentContext.trim() === "") {
             throw new Error("Current context is required for serendipity scanning");
@@ -140,7 +68,6 @@ export class SerendipityScanTool {
         // STEP 2: EXTRACT CONCEPTS USING REAL NLP
         // ═══════════════════════════════════════════════════════════════════
         const startExtraction = Date.now();
-        // ✅ REAL NLP EXTRACTION
         const extraction = conceptExtractor.extractConcepts(currentContext, {
             maxConcepts: 15,
             minImportance: 0.25,
@@ -159,16 +86,14 @@ export class SerendipityScanTool {
         // STEP 3: GENERATE SEED PROBES
         // ═══════════════════════════════════════════════════════════════════
         const startProbes = Date.now();
-        const seedProbes = this.generateSeedProbes(extractedConcepts, scanType, isEmptyGraph);
+        const seedProbes = this.generateSeedProbes(extractedConcepts, scanType);
         const probesTime = Date.now() - startProbes;
         transparency.addComputation(`Generated ${seedProbes.length} seed probes for ${scanType} scan`, 'probe-generation', 0.85, probesTime);
         // ═══════════════════════════════════════════════════════════════════
         // STEP 4: FIND RELATED CONCEPTS FROM GRAPH
         // ═══════════════════════════════════════════════════════════════════
         const startRelated = Date.now();
-        const relatedConcepts = isEmptyGraph
-            ? []
-            : this.findRelatedConcepts(extractedConcepts, scanType);
+        const relatedConcepts = isEmptyGraph ? [] : this.findRelatedConcepts(extractedConcepts, scanType);
         const relatedTime = Date.now() - startRelated;
         if (!isEmptyGraph) {
             transparency.addComputation(`Found ${relatedConcepts.length} related concepts in graph`, 'concept-matching', 0.8, relatedTime);
@@ -176,17 +101,18 @@ export class SerendipityScanTool {
         // ═══════════════════════════════════════════════════════════════════
         // STEP 5: GENERATE LLM SCAFFOLD
         // ═══════════════════════════════════════════════════════════════════
-        const scaffold = generateSerendipityMiningScaffold(extractedConcepts, seedProbes, noveltyThreshold, graphState, currentContext);
+        // ✅ FIX: Use correct signature (3-4 args, not 5)
+        const scaffold = generateSerendipityMiningScaffold(currentContext, noveltyThreshold, scanType, graphState // Optional 4th arg
+        );
         const llmPrompt = formatScaffoldAsPrompt(scaffold);
         transparency.addLLMDependency('Generate serendipitous discovery', 'Creative discovery of unknown unknowns requires LLM reasoning beyond computational analysis', 'required', 2500);
         // ═══════════════════════════════════════════════════════════════════
         // STEP 6: CREATE HONEST DISCOVERY PLACEHOLDER
         // ═══════════════════════════════════════════════════════════════════
-        const provisionalDiscovery = this.generateProvisionalDiscovery(extractedConcepts, seedProbes, scanType, isEmptyGraph);
+        const provisionalDiscovery = this.generateProvisionalDiscovery(extractedConcepts, scanType, isEmptyGraph);
         // ═══════════════════════════════════════════════════════════════════
         // STEP 7: CALCULATE HONEST SERENDIPITY SCORE
         // ═══════════════════════════════════════════════════════════════════
-        // ✅ NO MORE Math.random()!
         const baseScore = extraction.confidence * 0.4;
         const contextWeight = Math.min(0.3, extractedConcepts.length * 0.02);
         const noveltyWeight = noveltyThreshold * 0.2;
@@ -231,34 +157,33 @@ export class SerendipityScanTool {
             transparency: transparencyReport,
         };
     }
+    // ✅ FIX: Return correct GraphStateContext structure
     getGraphState() {
-        const nodes = this.dreamGraph.getNodes();
-        const edges = this.dreamGraph.getEdges();
+        const nodes = this.dreamGraph.getAllNodes(); // ✅ FIX: getAllNodes() not getNodes()
+        const edges = this.dreamGraph.getAllEdges(); // ✅ FIX: getAllEdges() not getEdges()
+        // ✅ FIX: Build recent concepts manually (no getRecentlyVisitedNodes())
+        const recentNodes = nodes
+            .sort((a, b) => b.creationTimestamp - a.creationTimestamp)
+            .slice(0, 10);
         return {
-            isEmpty: nodes.length === 0,
             nodeCount: nodes.length,
             edgeCount: edges.length,
-            recentActivity: nodes
-                .sort((a, b) => b.creationTimestamp - a.creationTimestamp)
-                .slice(0, 5)
-                .map((n) => n.content)
-                .join('; '),
+            clusters: [], // Could compute if needed
+            bridges: [], // Could compute if needed
+            recentConcepts: recentNodes.map(n => n.content),
         };
     }
-    generateSeedProbes(extractedConcepts, scanType, isEmptyGraph) {
+    generateSeedProbes(extractedConcepts, scanType) {
         const probes = [];
-        // Select relevant seed domains based on extracted concepts
         const relevantDomains = SEED_DOMAINS.filter((domain) => {
             return domain.concepts.some((c) => extractedConcepts.some(ec => ec.includes(c) || c.includes(ec)));
         });
-        // If no relevant domains, use random selection
         const domainsToUse = relevantDomains.length > 0
             ? relevantDomains.slice(0, 3)
             : SEED_DOMAINS.slice(0, 3);
         for (const domain of domainsToUse) {
             probes.push(...domain.probes.slice(0, 2));
         }
-        // Add scan-type specific probes
         switch (scanType) {
             case "bridge":
                 probes.push("What concept could connect the disconnected parts?");
@@ -280,20 +205,18 @@ export class SerendipityScanTool {
         return probes.slice(0, 6);
     }
     findRelatedConcepts(extractedConcepts, scanType) {
-        const nodes = this.dreamGraph.getNodes();
+        const nodes = this.dreamGraph.getAllNodes(); // ✅ FIX: getAllNodes()
         if (nodes.length === 0)
             return [];
         const related = [];
         for (const node of nodes) {
             let relevance = 0;
             const nodeContent = node.content.toLowerCase();
-            // Check for concept overlap
             for (const concept of extractedConcepts) {
                 if (nodeContent.includes(concept.toLowerCase())) {
                     relevance += 0.3;
                 }
             }
-            // Check for structural similarity based on scan type
             if (scanType === "bridge") {
                 const edges = this.dreamGraph.getEdgesFrom(node.id);
                 relevance += Math.min(0.3, edges.length * 0.05);
@@ -307,7 +230,7 @@ export class SerendipityScanTool {
             .slice(0, 5)
             .map((r) => r.content);
     }
-    generateProvisionalDiscovery(extractedConcepts, seedProbes, scanType, isEmptyGraph) {
+    generateProvisionalDiscovery(extractedConcepts, scanType, isEmptyGraph) {
         if (isEmptyGraph) {
             const seedDomain = SEED_DOMAINS[Math.floor(Math.random() * SEED_DOMAINS.length)];
             const seedConcept = seedDomain.concepts[Math.floor(Math.random() * seedDomain.concepts.length)];
@@ -324,15 +247,14 @@ export class SerendipityScanTool {
         }
     }
     createExplanation(isEmptyGraph, extractedConcepts, seedProbes, scanType, noveltyThreshold, extraction) {
-        if (isEmptyGraph) {
-            return `SERENDIPITY SCAN (V4.0 - PHASE 1 INTEGRATED)
+        const base = `SERENDIPITY SCAN (V4.0 - PHASE 1 INTEGRATED)
 
 ✅ REAL NLP EXTRACTION COMPLETED
 - Method: ${extraction.extractionMethod}
 - Concepts extracted: ${extractedConcepts.length}
 - Confidence: ${(extraction.confidence * 100).toFixed(0)}%
 
-CONTEXT MINING MODE (Empty Graph)
+${isEmptyGraph ? 'CONTEXT MINING MODE (Empty Graph)' : 'GRAPH EXPLORATION MODE'}
 
 EXTRACTED CONCEPTS:
 ${extractedConcepts.map((c) => `  • ${c}`).join("\n")}
@@ -341,36 +263,8 @@ SEED PROBES:
 ${seedProbes.map((p) => `  ? ${p}`).join("\n")}
 
 SCAN TYPE: ${scanType.toUpperCase()}
-NOVELTY TARGET: ${(noveltyThreshold * 100).toFixed(0)}%
-
-HOW THIS WORKS:
-1. Extracted meaningful concepts using compromise-nlp + TF-IDF
-2. Generated seed probes to guide LLM exploration
-3. Provided scaffold for Claude to discover unexpected connections
-
-The 'llmPrompt' field contains a complete prompt for serendipitous discovery.`;
-        }
-        else {
-            return `SERENDIPITY SCAN (V4.0 - PHASE 1 INTEGRATED)
-
-✅ REAL NLP EXTRACTION COMPLETED
-- Method: ${extraction.extractionMethod}
-- Concepts extracted: ${extractedConcepts.length}
-- Confidence: ${(extraction.confidence * 100).toFixed(0)}%
-
-GRAPH EXPLORATION MODE
-
-SCAN TYPE: ${scanType.toUpperCase()}
-NOVELTY TARGET: ${(noveltyThreshold * 100).toFixed(0)}%
-
-SEED PROBES:
-${seedProbes.map((p) => `  ? ${p}`).join("\n")}
-
-The 'llmPrompt' guides Claude toward discoveries that:
-• Connect to your context (not random)
-• Are genuinely surprising (not obvious)
-• Open new avenues (not dead ends)`;
-        }
+NOVELTY TARGET: ${(noveltyThreshold * 100).toFixed(0)}%`;
+        return base;
     }
     updateDreamGraph(context, extractedConcepts, discovery) {
         const timestamp = Date.now();

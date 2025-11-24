@@ -11,8 +11,8 @@
 import { EdgeType } from "../graph.js";
 import { generateSerendipityMiningScaffold, formatScaffoldAsPrompt, } from "../prompts/creative-scaffolds.js";
 // ✅ PHASE 1: Import real NLP and transparency
-import { conceptExtractor } from '../utils/concept-extractor.js';
-import { createTransparencyReport, computeHonestConfidence } from '../utils/transparency.js';
+import { conceptExtractor, } from "../utils/concept-extractor.js";
+import { createTransparencyReport, computeHonestConfidence, } from "../utils/transparency.js";
 export class SerendipityScanTool {
     dreamGraph;
     constructor(dreamGraph) {
@@ -20,7 +20,7 @@ export class SerendipityScanTool {
     }
     async execute(input) {
         // ✅ PHASE 1: Create transparency tracker
-        const transparency = createTransparencyReport('serendipity-scan');
+        const transparency = createTransparencyReport("serendipity-scan");
         const scanType = input.scanType ?? "random";
         const noveltyThreshold = input.noveltyThreshold ?? 0.7;
         // ═══════════════════════════════════════════════════════════════════
@@ -38,44 +38,44 @@ export class SerendipityScanTool {
         transparency.addComputation(`Extracted ${extraction.concepts.length} concepts using ${extraction.extractionMethod}`, extraction.extractionMethod, extraction.confidence, extractionTime);
         // ✅ Add warnings if extraction had issues
         if (extraction.fallbackUsed) {
-            transparency.addWarning('Concept extraction used fallback method - concept quality may vary');
+            transparency.addWarning("Concept extraction used fallback method - concept quality may vary");
         }
         if (extraction.concepts.length < 3) {
             transparency.addWarning(`Only ${extraction.concepts.length} concepts extracted - may limit discovery quality`);
         }
         // Extract just the concept texts
-        const extractedConcepts = extraction.concepts.map(c => c.text);
+        const extractedConcepts = extraction.concepts.map((c) => c.text);
         // ═══════════════════════════════════════════════════════════════════
         // STEP 2: ANALYZE GRAPH STATE
         // ═══════════════════════════════════════════════════════════════════
         const startGraphAnalysis = Date.now();
-        const isEmptyGraph = this.dreamGraph.getNodes().length === 0;
-        const relatedConcepts = isEmptyGraph ? [] : this.findRelatedConcepts(extractedConcepts);
+        const isEmptyGraph = this.dreamGraph.getAllNodes().length === 0;
+        const relatedConcepts = isEmptyGraph
+            ? []
+            : this.findRelatedConcepts(extractedConcepts);
         const graphAnalysisTime = Date.now() - startGraphAnalysis;
-        transparency.addComputation(`Analyzed graph state: ${isEmptyGraph ? 'empty' : `${relatedConcepts.length} related concepts found`}`, 'graph-traversal', isEmptyGraph ? 0.9 : 0.95, graphAnalysisTime);
+        transparency.addComputation(`Analyzed graph state: ${isEmptyGraph ? "empty" : `${relatedConcepts.length} related concepts found`}`, "graph-traversal", isEmptyGraph ? 0.9 : 0.95, graphAnalysisTime);
         // ═══════════════════════════════════════════════════════════════════
         // STEP 3: GENERATE SEED PROBES
         // ═══════════════════════════════════════════════════════════════════
         const startProbeGeneration = Date.now();
         const seedProbes = this.generateSeedProbes(extractedConcepts, scanType, isEmptyGraph);
         const probeGenerationTime = Date.now() - startProbeGeneration;
-        transparency.addComputation(`Generated ${seedProbes.length} seed probes for ${scanType} scan`, 'probe-generation', 0.85, probeGenerationTime);
+        transparency.addComputation(`Generated ${seedProbes.length} seed probes for ${scanType} scan`, "probe-generation", 0.85, probeGenerationTime);
         // ═══════════════════════════════════════════════════════════════════
         // STEP 4: CREATE LLM SCAFFOLD (HONEST ABOUT LLM DEPENDENCY)
         // ═══════════════════════════════════════════════════════════════════
         const graphContext = {
-            isEmpty: isEmptyGraph,
-            nodeCount: this.dreamGraph.getNodes().length,
-            edgeCount: this.dreamGraph.getEdges().length,
-            recentActivity: this.dreamGraph.getRecentlyVisitedNodes(5)
-                .map(n => n.content)
-                .join('; '),
+            nodeCount: this.dreamGraph.getAllNodes().length,
+            edgeCount: this.dreamGraph.getAllEdges().length,
+            clusters: [],
+            bridges: [],
+            recentConcepts: [],
         };
-        const scaffold = generateSerendipityMiningScaffold(extractedConcepts, seedProbes, noveltyThreshold, graphContext, input.context);
+        const scaffold = generateSerendipityMiningScaffold(input.context, noveltyThreshold, scanType, graphContext);
         const llmPrompt = formatScaffoldAsPrompt(scaffold);
         // ✅ Be honest about LLM dependency
-        transparency.addLLMDependency('Generate serendipitous discovery', 'Creative discovery of unknown unknowns requires LLM reasoning beyond computational analysis', 'required', 2500 // estimated 2.5 seconds
-        );
+        transparency.addLLMDependency("Generate serendipitous discovery", "Creative discovery of unknown unknowns requires LLM reasoning beyond computational analysis", "required", 2500);
         // ═══════════════════════════════════════════════════════════════════
         // STEP 5: CREATE HONEST DISCOVERY PLACEHOLDER
         // ═══════════════════════════════════════════════════════════════════
@@ -91,14 +91,13 @@ export class SerendipityScanTool {
         const contextWeight = Math.min(0.3, extractedConcepts.length * 0.03); // More concepts = more potential
         const noveltyWeight = noveltyThreshold * 0.2; // User's novelty preference
         const serendipityScore = Math.min(0.95, baseScore + contextWeight + noveltyWeight);
-        transparency.addComputation(`Calculated serendipity score: ${(serendipityScore * 100).toFixed(0)}%`, 'weighted-scoring', 0.8, 1 // trivial computation time
-        );
+        transparency.addComputation(`Calculated serendipity score: ${(serendipityScore * 100).toFixed(0)}%`, "weighted-scoring", 0.8, 1);
         // ═══════════════════════════════════════════════════════════════════
         // STEP 7: BUILD TRANSPARENCY REPORT
         // ═══════════════════════════════════════════════════════════════════
         const { score: overallConfidence, reasoning } = computeHonestConfidence({
             computationQuality: extraction.confidence,
-            llmDependencyLevel: 'high', // We need LLM for creative discovery
+            llmDependencyLevel: "high", // We need LLM for creative discovery
             fallbackUsed: extraction.fallbackUsed,
             dataQuality: Math.min(1.0, extractedConcepts.length / 10), // More concepts = better data
         });
@@ -130,7 +129,7 @@ export class SerendipityScanTool {
     // ═══════════════════════════════════════════════════════════════════
     findRelatedConcepts(extractedConcepts) {
         const related = [];
-        const nodes = this.dreamGraph.getNodes();
+        const nodes = this.dreamGraph.getAllNodes();
         for (const node of nodes) {
             for (const concept of extractedConcepts) {
                 if (node.content.toLowerCase().includes(concept.toLowerCase())) {
@@ -157,52 +156,52 @@ export class SerendipityScanTool {
         }
         else {
             // Graph-specific probes
-            if (scanType === 'bridge') {
-                probes.push('What concept could bridge these disconnected clusters?');
+            if (scanType === "bridge") {
+                probes.push("What concept could bridge these disconnected clusters?");
             }
-            else if (scanType === 'gap') {
-                probes.push('What obvious concept is conspicuously missing?');
+            else if (scanType === "gap") {
+                probes.push("What obvious concept is conspicuously missing?");
             }
-            else if (scanType === 'pattern') {
-                probes.push('What hidden pattern repeats across these concepts?');
+            else if (scanType === "pattern") {
+                probes.push("What hidden pattern repeats across these concepts?");
             }
         }
         return probes;
     }
     createHonestExplanation(isEmptyGraph, extractedConcepts, seedProbes, scanType, noveltyThreshold, extraction) {
         const lines = [];
-        lines.push('SERENDIPITY SCAN - AUTHENTIC ANALYSIS');
-        lines.push('');
-        lines.push(`MODE: ${isEmptyGraph ? 'Context Mining' : 'Graph Exploration'}`);
+        lines.push("SERENDIPITY SCAN - AUTHENTIC ANALYSIS");
+        lines.push("");
+        lines.push(`MODE: ${isEmptyGraph ? "Context Mining" : "Graph Exploration"}`);
         lines.push(`SCAN TYPE: ${scanType.toUpperCase()}`);
         lines.push(`NOVELTY TARGET: ${(noveltyThreshold * 100).toFixed(0)}%`);
-        lines.push('');
-        lines.push('CONCEPT EXTRACTION:');
+        lines.push("");
+        lines.push("CONCEPT EXTRACTION:");
         lines.push(`  Method: ${extraction.extractionMethod}`);
         lines.push(`  Confidence: ${(extraction.confidence * 100).toFixed(0)}%`);
         lines.push(`  Extracted: ${extractedConcepts.length} concepts`);
         if (extraction.fallbackUsed) {
-            lines.push('  ⚠ Fallback method used');
+            lines.push("  ⚠ Fallback method used");
         }
-        lines.push('');
-        lines.push('EXTRACTED CONCEPTS:');
-        extractedConcepts.slice(0, 8).forEach(c => {
+        lines.push("");
+        lines.push("EXTRACTED CONCEPTS:");
+        extractedConcepts.slice(0, 8).forEach((c) => {
             lines.push(`  • ${c}`);
         });
         if (extractedConcepts.length > 8) {
             lines.push(`  ... and ${extractedConcepts.length - 8} more`);
         }
-        lines.push('');
-        lines.push('SEED PROBES:');
-        seedProbes.forEach(p => {
+        lines.push("");
+        lines.push("SEED PROBES:");
+        seedProbes.forEach((p) => {
             lines.push(`  ? ${p}`);
         });
-        lines.push('');
-        lines.push('WHAT HAPPENS NEXT:');
-        lines.push('The llmPrompt field contains a structured scaffold that will guide');
-        lines.push('Claude to discover genuinely serendipitous connections grounded in');
-        lines.push('YOUR context (not random hallucinations).');
-        return lines.join('\n');
+        lines.push("");
+        lines.push("WHAT HAPPENS NEXT:");
+        lines.push("The llmPrompt field contains a structured scaffold that will guide");
+        lines.push("Claude to discover genuinely serendipitous connections grounded in");
+        lines.push("YOUR context (not random hallucinations).");
+        return lines.join("\n");
     }
     updateDreamGraph(context, extractedConcepts, discovery) {
         const timestamp = Date.now();
@@ -210,11 +209,11 @@ export class SerendipityScanTool {
         try {
             this.dreamGraph.addNode({
                 id: `${scanId}-context`,
-                content: context.substring(0, 200) + (context.length > 200 ? '...' : ''),
+                content: context.substring(0, 200) + (context.length > 200 ? "..." : ""),
                 creationTimestamp: timestamp,
-                source: 'serendipity_scan',
+                source: "serendipity_scan",
                 metadata: {
-                    role: 'scan_context',
+                    role: "scan_context",
                     extractedConcepts,
                     fullContextLength: context.length,
                 },
@@ -223,9 +222,9 @@ export class SerendipityScanTool {
                 id: `${scanId}-discovery`,
                 content: discovery,
                 creationTimestamp: timestamp + 1,
-                source: 'serendipity_scan',
+                source: "serendipity_scan",
                 metadata: {
-                    role: 'discovery',
+                    role: "discovery",
                     isPending: true,
                 },
             });
@@ -234,7 +233,7 @@ export class SerendipityScanTool {
                 target: `${scanId}-discovery`,
                 type: EdgeType.REMINDS_OF,
                 weight: 0.6,
-                metadata: { scanType: 'serendipity' },
+                metadata: { scanType: "serendipity" },
             });
             this.dreamGraph.visitNode(`${scanId}-discovery`);
         }
