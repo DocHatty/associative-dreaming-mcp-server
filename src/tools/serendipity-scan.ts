@@ -1,5 +1,5 @@
 /**
- * Serendipity Scan - The Unknown Unknown Finder (V4.0 - PHASE 1 INTEGRATED)
+ * Serendipity Scan - The Unknown Unknown Finder
  *
  * ✅ FIXED: All TypeScript errors resolved
  * ✅ Real NLP concept extraction (compromise + natural + stopword)
@@ -16,7 +16,6 @@ import {
   GraphStateContext,
 } from "../prompts/creative-scaffolds.js";
 
-// ✅ PHASE 1: Real NLP and transparency
 import { conceptExtractor, ExtractedConcept } from '../utils/concept-extractor.js';
 import { 
   createTransparencyReport, 
@@ -103,10 +102,7 @@ export class SerendipityScanTool {
     if (!currentContext || currentContext.trim() === "") {
       throw new Error("Current context is required for serendipity scanning");
     }
-
-    // ═══════════════════════════════════════════════════════════════════
     // STEP 1: ANALYZE GRAPH STATE
-    // ═══════════════════════════════════════════════════════════════════
     
     const startGraphAnalysis = Date.now();
     const graphState = this.getGraphState();
@@ -119,10 +115,7 @@ export class SerendipityScanTool {
       0.95,
       graphAnalysisTime
     );
-
-    // ═══════════════════════════════════════════════════════════════════
     // STEP 2: EXTRACT CONCEPTS USING REAL NLP
-    // ═══════════════════════════════════════════════════════════════════
     
     const startExtraction = Date.now();
     const extraction = conceptExtractor.extractConcepts(currentContext, {
@@ -148,10 +141,7 @@ export class SerendipityScanTool {
     }
     
     const extractedConcepts = extraction.concepts.map(c => c.text);
-
-    // ═══════════════════════════════════════════════════════════════════
     // STEP 3: GENERATE SEED PROBES
-    // ═══════════════════════════════════════════════════════════════════
     
     const startProbes = Date.now();
     const seedProbes = this.generateSeedProbes(extractedConcepts, scanType);
@@ -163,10 +153,7 @@ export class SerendipityScanTool {
       0.85,
       probesTime
     );
-
-    // ═══════════════════════════════════════════════════════════════════
     // STEP 4: FIND RELATED CONCEPTS FROM GRAPH
-    // ═══════════════════════════════════════════════════════════════════
     
     const startRelated = Date.now();
     const relatedConcepts = isEmptyGraph ? [] : this.findRelatedConcepts(extractedConcepts, scanType);
@@ -180,12 +167,7 @@ export class SerendipityScanTool {
         relatedTime
       );
     }
-
-    // ═══════════════════════════════════════════════════════════════════
     // STEP 5: GENERATE LLM SCAFFOLD
-    // ═══════════════════════════════════════════════════════════════════
-    
-    // ✅ FIX: Use correct signature (3-4 args, not 5)
     const scaffold = generateSerendipityMiningScaffold(
       currentContext,
       noveltyThreshold,
@@ -201,20 +183,14 @@ export class SerendipityScanTool {
       'required',
       2500
     );
-
-    // ═══════════════════════════════════════════════════════════════════
     // STEP 6: CREATE HONEST DISCOVERY PLACEHOLDER
-    // ═══════════════════════════════════════════════════════════════════
     
     const provisionalDiscovery = this.generateProvisionalDiscovery(
       extractedConcepts,
       scanType,
       isEmptyGraph,
     );
-
-    // ═══════════════════════════════════════════════════════════════════
     // STEP 7: CALCULATE HONEST SERENDIPITY SCORE
-    // ═══════════════════════════════════════════════════════════════════
     
     const baseScore = extraction.confidence * 0.4;
     const contextWeight = Math.min(0.3, extractedConcepts.length * 0.02);
@@ -229,10 +205,7 @@ export class SerendipityScanTool {
       0.85,
       1
     );
-
-    // ═══════════════════════════════════════════════════════════════════
     // STEP 8: CREATE EXPLANATION
-    // ═══════════════════════════════════════════════════════════════════
     
     const explanation = this.createExplanation(
       isEmptyGraph,
@@ -242,16 +215,10 @@ export class SerendipityScanTool {
       noveltyThreshold,
       extraction,
     );
-
-    // ═══════════════════════════════════════════════════════════════════
     // STEP 9: UPDATE DREAM GRAPH
-    // ═══════════════════════════════════════════════════════════════════
     
     this.updateDreamGraph(currentContext, extractedConcepts, provisionalDiscovery);
-
-    // ═══════════════════════════════════════════════════════════════════
     // STEP 10: BUILD TRANSPARENCY REPORT
-    // ═══════════════════════════════════════════════════════════════════
     
     const { score: overallConfidence, reasoning } = computeHonestConfidence({
       computationQuality: extraction.confidence,
@@ -285,13 +252,10 @@ export class SerendipityScanTool {
       transparency: transparencyReport,
     };
   }
-
-  // ✅ FIX: Return correct GraphStateContext structure
   private getGraphState(): GraphStateContext {
-    const nodes = this.dreamGraph.getAllNodes();  // ✅ FIX: getAllNodes() not getNodes()
-    const edges = this.dreamGraph.getAllEdges();  // ✅ FIX: getAllEdges() not getEdges()
+    const nodes = this.dreamGraph.getAllNodes();
+    const edges = this.dreamGraph.getAllEdges();
 
-    // ✅ FIX: Build recent concepts manually (no getRecentlyVisitedNodes())
     const recentNodes = nodes
       .sort((a, b) => b.creationTimestamp - a.creationTimestamp)
       .slice(0, 10);
@@ -345,7 +309,7 @@ export class SerendipityScanTool {
   }
 
   private findRelatedConcepts(extractedConcepts: string[], scanType: string): string[] {
-    const nodes = this.dreamGraph.getAllNodes();  // ✅ FIX: getAllNodes()
+    const nodes = this.dreamGraph.getAllNodes();
     if (nodes.length === 0) return [];
 
     const related: Array<{ content: string; relevance: number }> = [];
@@ -404,7 +368,7 @@ export class SerendipityScanTool {
     noveltyThreshold: number,
     extraction: any,
   ): string {
-    const base = `SERENDIPITY SCAN (V4.0 - PHASE 1 INTEGRATED)
+    const base = `SERENDIPITY SCAN
 
 ✅ REAL NLP EXTRACTION COMPLETED
 - Method: ${extraction.extractionMethod}

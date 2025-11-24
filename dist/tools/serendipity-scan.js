@@ -1,5 +1,5 @@
 /**
- * Serendipity Scan - The Unknown Unknown Finder (V4.0 - PHASE 1 INTEGRATED)
+ * Serendipity Scan - The Unknown Unknown Finder
  *
  * ✅ FIXED: All TypeScript errors resolved
  * ✅ Real NLP concept extraction (compromise + natural + stopword)
@@ -9,7 +9,6 @@
  */
 import { EdgeType } from "../graph.js";
 import { generateSerendipityMiningScaffold, formatScaffoldAsPrompt, } from "../prompts/creative-scaffolds.js";
-// ✅ PHASE 1: Real NLP and transparency
 import { conceptExtractor } from '../utils/concept-extractor.js';
 import { createTransparencyReport, computeHonestConfidence } from '../utils/transparency.js';
 // Seed domains for exploration
@@ -56,17 +55,13 @@ export class SerendipityScanTool {
         if (!currentContext || currentContext.trim() === "") {
             throw new Error("Current context is required for serendipity scanning");
         }
-        // ═══════════════════════════════════════════════════════════════════
         // STEP 1: ANALYZE GRAPH STATE
-        // ═══════════════════════════════════════════════════════════════════
         const startGraphAnalysis = Date.now();
         const graphState = this.getGraphState();
         const isEmptyGraph = graphState.nodeCount === 0;
         const graphAnalysisTime = Date.now() - startGraphAnalysis;
         transparency.addComputation(`Analyzed graph state: ${isEmptyGraph ? 'empty' : `${graphState.nodeCount} nodes, ${graphState.edgeCount} edges`}`, 'graph-traversal', 0.95, graphAnalysisTime);
-        // ═══════════════════════════════════════════════════════════════════
         // STEP 2: EXTRACT CONCEPTS USING REAL NLP
-        // ═══════════════════════════════════════════════════════════════════
         const startExtraction = Date.now();
         const extraction = conceptExtractor.extractConcepts(currentContext, {
             maxConcepts: 15,
@@ -82,54 +77,37 @@ export class SerendipityScanTool {
             transparency.addWarning(`Only ${extraction.concepts.length} concepts extracted - may limit discovery quality`);
         }
         const extractedConcepts = extraction.concepts.map(c => c.text);
-        // ═══════════════════════════════════════════════════════════════════
         // STEP 3: GENERATE SEED PROBES
-        // ═══════════════════════════════════════════════════════════════════
         const startProbes = Date.now();
         const seedProbes = this.generateSeedProbes(extractedConcepts, scanType);
         const probesTime = Date.now() - startProbes;
         transparency.addComputation(`Generated ${seedProbes.length} seed probes for ${scanType} scan`, 'probe-generation', 0.85, probesTime);
-        // ═══════════════════════════════════════════════════════════════════
         // STEP 4: FIND RELATED CONCEPTS FROM GRAPH
-        // ═══════════════════════════════════════════════════════════════════
         const startRelated = Date.now();
         const relatedConcepts = isEmptyGraph ? [] : this.findRelatedConcepts(extractedConcepts, scanType);
         const relatedTime = Date.now() - startRelated;
         if (!isEmptyGraph) {
             transparency.addComputation(`Found ${relatedConcepts.length} related concepts in graph`, 'concept-matching', 0.8, relatedTime);
         }
-        // ═══════════════════════════════════════════════════════════════════
         // STEP 5: GENERATE LLM SCAFFOLD
-        // ═══════════════════════════════════════════════════════════════════
-        // ✅ FIX: Use correct signature (3-4 args, not 5)
         const scaffold = generateSerendipityMiningScaffold(currentContext, noveltyThreshold, scanType, graphState // Optional 4th arg
         );
         const llmPrompt = formatScaffoldAsPrompt(scaffold);
         transparency.addLLMDependency('Generate serendipitous discovery', 'Creative discovery of unknown unknowns requires LLM reasoning beyond computational analysis', 'required', 2500);
-        // ═══════════════════════════════════════════════════════════════════
         // STEP 6: CREATE HONEST DISCOVERY PLACEHOLDER
-        // ═══════════════════════════════════════════════════════════════════
         const provisionalDiscovery = this.generateProvisionalDiscovery(extractedConcepts, scanType, isEmptyGraph);
-        // ═══════════════════════════════════════════════════════════════════
         // STEP 7: CALCULATE HONEST SERENDIPITY SCORE
-        // ═══════════════════════════════════════════════════════════════════
         const baseScore = extraction.confidence * 0.4;
         const contextWeight = Math.min(0.3, extractedConcepts.length * 0.02);
         const noveltyWeight = noveltyThreshold * 0.2;
         const graphWeight = isEmptyGraph ? 0.1 : Math.min(0.1, relatedConcepts.length * 0.02);
         const serendipityScore = Math.min(0.95, baseScore + contextWeight + noveltyWeight + graphWeight);
         transparency.addComputation(`Calculated serendipity score: ${(serendipityScore * 100).toFixed(0)}%`, 'weighted-scoring', 0.85, 1);
-        // ═══════════════════════════════════════════════════════════════════
         // STEP 8: CREATE EXPLANATION
-        // ═══════════════════════════════════════════════════════════════════
         const explanation = this.createExplanation(isEmptyGraph, extractedConcepts, seedProbes, scanType, noveltyThreshold, extraction);
-        // ═══════════════════════════════════════════════════════════════════
         // STEP 9: UPDATE DREAM GRAPH
-        // ═══════════════════════════════════════════════════════════════════
         this.updateDreamGraph(currentContext, extractedConcepts, provisionalDiscovery);
-        // ═══════════════════════════════════════════════════════════════════
         // STEP 10: BUILD TRANSPARENCY REPORT
-        // ═══════════════════════════════════════════════════════════════════
         const { score: overallConfidence, reasoning } = computeHonestConfidence({
             computationQuality: extraction.confidence,
             llmDependencyLevel: 'high',
@@ -157,11 +135,9 @@ export class SerendipityScanTool {
             transparency: transparencyReport,
         };
     }
-    // ✅ FIX: Return correct GraphStateContext structure
     getGraphState() {
-        const nodes = this.dreamGraph.getAllNodes(); // ✅ FIX: getAllNodes() not getNodes()
-        const edges = this.dreamGraph.getAllEdges(); // ✅ FIX: getAllEdges() not getEdges()
-        // ✅ FIX: Build recent concepts manually (no getRecentlyVisitedNodes())
+        const nodes = this.dreamGraph.getAllNodes();
+        const edges = this.dreamGraph.getAllEdges();
         const recentNodes = nodes
             .sort((a, b) => b.creationTimestamp - a.creationTimestamp)
             .slice(0, 10);
@@ -205,7 +181,7 @@ export class SerendipityScanTool {
         return probes.slice(0, 6);
     }
     findRelatedConcepts(extractedConcepts, scanType) {
-        const nodes = this.dreamGraph.getAllNodes(); // ✅ FIX: getAllNodes()
+        const nodes = this.dreamGraph.getAllNodes();
         if (nodes.length === 0)
             return [];
         const related = [];
@@ -247,7 +223,7 @@ export class SerendipityScanTool {
         }
     }
     createExplanation(isEmptyGraph, extractedConcepts, seedProbes, scanType, noveltyThreshold, extraction) {
-        const base = `SERENDIPITY SCAN (V4.0 - PHASE 1 INTEGRATED)
+        const base = `SERENDIPITY SCAN
 
 ✅ REAL NLP EXTRACTION COMPLETED
 - Method: ${extraction.extractionMethod}

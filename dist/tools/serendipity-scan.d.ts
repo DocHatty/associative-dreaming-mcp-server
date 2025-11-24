@@ -1,5 +1,5 @@
 /**
- * Serendipity Scan - The Unknown Unknown Finder (V4.0 - PHASE 1 INTEGRATED)
+ * Serendipity Scan - The Unknown Unknown Finder
  *
  * ✅ FIXED: All TypeScript errors resolved
  * ✅ Real NLP concept extraction (compromise + natural + stopword)

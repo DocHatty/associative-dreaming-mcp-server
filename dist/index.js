@@ -267,6 +267,24 @@ const RESOURCES = [
         mimeType: "application/json",
     },
     {
+        uri: "feedback://stats",
+        name: "Feedback Statistics",
+        description: "LLM feedback statistics and learned parameters",
+        mimeType: "application/json",
+    },
+    {
+        uri: "feedback://recent",
+        name: "Recent Feedback",
+        description: "Last 10 feedback items from LLM",
+        mimeType: "application/json",
+    },
+    {
+        uri: "feedback://learned",
+        name: "Learned Parameters",
+        description: "Parameters learned from LLM feedback",
+        mimeType: "application/json",
+    },
+    {
         uri: "graph://stats",
         name: "Graph Statistics",
         description: "Real-time statistics: node count, edge count, diversity score, clustering info",
@@ -386,6 +404,75 @@ const server = new Server({
 });
 // Initialize the Associative Dreaming server
 const dreamingServer = new AssociativeDreamingServer();
+// Feedback tool - allows LLM to provide structured feedback
+const FEEDBACK_TOOL = {
+    name: "provide_feedback",
+    description: `Submit feedback about a previous tool execution to help the MCP learn.
+
+After using a creative tool (semantic_drift, bisociative_synthesis, etc.), call this to report:
+- How well it worked
+- Whether hints were useful
+- Actual semantic distance achieved
+- Quality of the output
+
+This creates a learning loop where the MCP improves based on your assessment.
+
+Parameters:
+- toolName: Which tool you're providing feedback for (required)
+- qualityRating: Overall quality 0-10 (required)
+- actualDistance: Semantic distance you actually achieved (0.0-1.0, optional)
+- destinationConcept: The concept you landed on (optional)
+- hintsQuality: Were hints helpful? (optional)
+- scaffoldIssue: Any problems with the scaffold? (optional)
+- suggestion: How to improve (optional)`,
+    inputSchema: {
+        type: "object",
+        properties: {
+            toolName: {
+                type: "string",
+                description: "Which tool are you providing feedback for",
+                enum: [
+                    "semantic_drift",
+                    "bisociative_synthesis",
+                    "oblique_constraint",
+                    "serendipity_scan",
+                    "meta_association",
+                ],
+            },
+            qualityRating: {
+                type: "number",
+                description: "Overall quality rating 0-10",
+                minimum: 0,
+                maximum: 10,
+            },
+            actualDistance: {
+                type: "number",
+                description: "Actual semantic distance achieved (0.0-1.0)",
+                minimum: 0,
+                maximum: 1,
+            },
+            destinationConcept: {
+                type: "string",
+                description: "The destination concept you reached",
+            },
+            hintsQuality: {
+                type: "string",
+                description: "Were the hints helpful?",
+                enum: ["too_close", "just_right", "too_far", "unhelpful"],
+            },
+            scaffoldIssue: {
+                type: "string",
+                description: "Any issues with the scaffold?",
+                enum: ["unclear", "too_constrained", "needs_example", "good"],
+            },
+            suggestion: {
+                type: "string",
+                description: "Suggestions for improvement",
+            },
+        },
+        required: ["toolName", "qualityRating"],
+    },
+};
 // Register the tools with the MCP server
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
     tools: [
@@ -394,17 +481,59 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         OBLIQUE_CONSTRAINT_TOOL,
         SERENDIPITY_SCAN_TOOL,
         META_ASSOCIATION_TOOL,
+        FEEDBACK_TOOL,
     ],
 }));
 // Handle tool calls
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const toolName = request.params.name;
+    if (toolName === "provide_feedback") {
+        // Handle feedback submission
+        const { getFeedbackService } = await import("./services/feedback-service.js");
+        const feedbackService = getFeedbackService();
+        const args = request.params.arguments;
+        const feedback = {
+            toolName: args.toolName,
+            timestamp: Date.now(),
+            inputParams: args.inputParams || {},
+            qualityRating: args.qualityRating,
+            actualDistance: args.actualDistance,
+            destinationConcept: args.destinationConcept,
+            hintsQuality: args.hintsQuality,
+            scaffoldQuality: args.scaffoldIssue,
+            suggestion: args.suggestion,
+            surpriseLevel: args.surpriseLevel,
+            coherenceLevel: args.coherenceLevel,
+        };
+        feedbackService.recordFeedback(feedback);
+        const stats = feedbackService.getStats(args.toolName);
+        return {
+            content: [
+                {
+                    type: "text",
+                    text: `✅ Feedback recorded for ${args.toolName}!
+
+Quality: ${args.qualityRating}/10
+${args.actualDistance ? `Actual distance: ${(args.actualDistance * 100).toFixed(0)}%` : ""}
+${args.destinationConcept ? `Destination: "${args.destinationConcept}"` : ""}
+
+📊 Updated Statistics:
+- Total feedback: ${stats.totalFeedback}
+- Average quality: ${stats.avgQuality.toFixed(1)}/10
+- Average distance: ${(stats.avgDistance * 100).toFixed(0)}%
+- Patterns learned: ${stats.learnedPatterns}
+
+The MCP will use this to improve future ${args.toolName} calls!`,
+                },
+            ],
+        };
+    }
     if (toolName === "semantic_drift" ||
         toolName === "bisociative_synthesis" ||
         toolName === "oblique_constraint" ||
         toolName === "serendipity_scan" ||
         toolName === "meta_association") {
-        const result = dreamingServer.processDream({
+        const result = await dreamingServer.processDream({
             tool: toolName,
             input: request.params.arguments,
         });
@@ -582,6 +711,51 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
                                 reason: g.reason,
                                 suggestion: `Consider connecting "${g.concept1}" and "${g.concept2}" - they share ${g.reason}`,
                             })),
+                        }, null, 2),
+                    },
+                ],
+            };
+        }
+        case "feedback://stats": {
+            const { getFeedbackService } = await import("./services/feedback-service.js");
+            const feedbackService = getFeedbackService();
+            const stats = feedbackService.getStats("semantic_drift");
+            return {
+                contents: [
+                    {
+                        uri,
+                        mimeType: "application/json",
+                        text: JSON.stringify(stats, null, 2),
+                    },
+                ],
+            };
+        }
+        case "feedback://recent": {
+            const { getFeedbackService } = await import("./services/feedback-service.js");
+            const feedbackService = getFeedbackService();
+            const recent = feedbackService.getRecent(10);
+            return {
+                contents: [
+                    {
+                        uri,
+                        mimeType: "application/json",
+                        text: JSON.stringify({ recentFeedback: recent }, null, 2),
+                    },
+                ],
+            };
+        }
+        case "feedback://learned": {
+            const { getFeedbackService } = await import("./services/feedback-service.js");
+            const feedbackService = getFeedbackService();
+            const exported = feedbackService.exportData();
+            return {
+                contents: [
+                    {
+                        uri,
+                        mimeType: "application/json",
+                        text: JSON.stringify({
+                            patternsLearned: exported.learnedParams,
+                            totalFeedback: exported.stats.totalItems,
                         }, null, 2),
                     },
                 ],

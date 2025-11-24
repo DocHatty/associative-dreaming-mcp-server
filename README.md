@@ -119,7 +119,7 @@ Restart Claude. Ask it to use the associative dreaming tools. Watch what happens
 
 ---
 
-## ⚡ The Five Engines
+## ⚡ The Six Tools
 
 ### 1. `semantic_drift` — The Controlled Hallucination Engine
 
@@ -206,6 +206,34 @@ The amplifier. Takes outputs from the other tools and forces them to **collide**
 **What you get**: Collision points between concepts + emergent meta-patterns + the weirdest justified connection + practical extraction from the chaos.
 
 **Use when**: You've run multiple tools and want to see what emerges from forcing them together. Maximum lateral force required.
+
+---
+
+### 6. `provide_feedback` — The Learning Engine (NEW in v1.1)
+
+Help the MCP learn from your creative explorations. Rate the quality of tool outputs, report actual semantic distances, and flag what worked or didn't.
+
+```typescript
+{
+  toolName: "semantic_drift",
+  inputParams: { anchorConcept: "blockchain", driftMagnitude: 0.7, temperature: 0.8 },
+  qualityRating: 9,              // 0-10
+  actualDistance: 0.68,          // 0-1 (your assessment)
+  destinationConcept: "mycelium networks",
+  hintsQuality: "just_right",    // too_close | just_right | too_far | unhelpful
+  surpriseLevel: 8,              // 0-10
+  coherenceLevel: 9              // 0-10
+}
+```
+
+**What happens**: After 3+ feedback samples for a concept pattern, the system automatically applies learned optimal parameters. If blockchain works best at 70% drift, it'll use 70% even if you request 30%.
+
+**Use when**: After any tool execution where you want the system to learn from the result. The more feedback, the smarter it gets.
+
+**Resources available**:
+- `feedback://stats` — Overall feedback statistics
+- `feedback://recent` — Last 10 feedback items
+- `feedback://learned` — Learned parameters by concept pattern
 
 ---
 
@@ -369,7 +397,11 @@ src/
 ├── config.ts             # Configuration management
 ├── graph.ts              # Concept relationship graph
 ├── schemas.ts            # Zod validation schemas
-├── tools/                # The five creative engines
+├── services/             # Intelligence services (NEW in v1.1)
+│   ├── embedding-service.ts    # Vector embeddings (OpenAI + TF-IDF fallback)
+│   ├── feedback-service.ts     # LLM → MCP learning loop
+│   └── hint-service.ts         # Graph-based hint generation
+├── tools/                # The six creative engines
 │   ├── semantic-drift.ts
 │   ├── bisociative-synthesis.ts
 │   ├── oblique-constraint.ts
@@ -378,6 +410,9 @@ src/
 ├── prompts/              # Scaffold generation
 │   └── creative-scaffolds.ts
 └── utils/                # Helper utilities
+    ├── concept-extractor.ts    # Real NLP concept extraction
+    ├── transparency.ts         # Computation tracking
+    ├── logger.ts              # Structured logging
     ├── concept.ts
     ├── random.ts
     └── errors.ts
@@ -387,25 +422,63 @@ src/
 
 | Variable | Description | Default |
 |----------|-------------|---------|
+| `OPENAI_API_KEY` | OpenAI API key for real semantic embeddings (recommended) | None (falls back to TF-IDF) |
 | `DISABLE_DREAM_LOGGING` | Set to `"true"` to suppress console output | `false` |
+
+**Note**: Without `OPENAI_API_KEY`, the system uses TF-IDF fallback embeddings. For best results, set your OpenAI key:
+
+```bash
+export OPENAI_API_KEY="sk-..."
+```
 
 ---
 
 ## 📊 System Status
 
-### ✅ Current Capabilities (v1.0)
+### ✅ Current Capabilities (v1.1 - MAJOR UPGRADE)
+- **Real Vector Embeddings**: True semantic distance using OpenAI embeddings (with TF-IDF fallback)
+- **LLM → MCP Feedback Loop**: System learns optimal parameters from your usage patterns
+- **Graph-Based Hints**: Dynamic hint generation from concept graph structure (replaces 200+ lines of hardcoded data)
+- **Parameter Learning**: After 3+ examples, automatically applies learned optimal settings
+- **Separation of Concerns**: MCP does computation (vectors, graphs, stats), LLM does creativity
 - Creative prompt scaffolding for 5 distinct thinking modes
-- Concept relationship graph with typed edges
-- Parameter-driven exploration (drift magnitude, temperature, chaos intensity)
+- Concept relationship graph with typed edges and clustering
 - Traceable reasoning chains ("because chains")
+- Persistent learning storage (`.feedback-store.json`)
 - Works seamlessly with Claude via MCP protocol
 
+### 🔥 What's New in v1.1
+
+**Real Computation, Not Fake**:
+- ✅ Semantic distance computed via cosine similarity on embeddings
+- ✅ Hints generated from actual graph neighbors and edge relationships
+- ✅ Bridge nodes discovered through betweenness centrality
+- ✅ Parameters learned from quality feedback across sessions
+
+**Adaptive Intelligence**:
+```typescript
+// You provide feedback once:
+provide_feedback({
+  toolName: "semantic_drift",
+  anchorConcept: "blockchain",
+  driftMagnitude: 0.7,
+  qualityRating: 9
+})
+
+// After 3 examples, the system learns:
+// "blockchain" works best at 70% drift, 80% temperature
+
+// Next time you ask for blockchain:
+semantic_drift({ anchorConcept: "blockchain", driftMagnitude: 0.3 })
+
+// System automatically applies learned optimal: 70% drift! 🎯
+```
+
 ### 🔮 Planned Enhancements
-- **v1.1**: Real NLP concept extraction (compromise, natural, stopword)
-- **v1.2**: Transparency reporting (show computational vs. creative work)
-- **v1.3**: Vector similarity engine for true semantic distance
-- **v2.0**: Concept map visualization
-- **v2.1**: Multi-turn conversation support with context accumulation
+- **v1.2**: Concept map visualization (interactive graph explorer)
+- **v1.3**: Multi-turn conversation support with context accumulation
+- **v1.4**: Cross-domain bridge discovery using community detection
+- **v2.0**: Collaborative learning across users (opt-in)
 
 See [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md) for detailed roadmap.
 

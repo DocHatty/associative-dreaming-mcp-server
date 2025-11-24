@@ -1,11 +1,5 @@
 /**
- * Semantic Drift - Controlled Hallucination Engine (V5.0 - PHASE 1 INTEGRATED)
- *
- * MAJOR UPGRADE FROM V4.0:
- * ✅ Real NLP concept extraction (compromise + natural + stopword)
- * ✅ Transparency reporting (honest about computation vs. LLM work)
- * ✅ Grounded confidence scores (no more fake numbers)
- * ✅ Full provenance tracking for every extraction
+ * Semantic Drift - Controlled Hallucination Engine
  *
  * This tool implements a stochastic random walk through the concept space,
  * seeking semantically distant yet contextually relevant concepts.
@@ -17,15 +11,18 @@
  */
 import { DreamGraph } from "../graph.js";
 import { CreativeScaffold } from "../prompts/creative-scaffolds.js";
-import { ExtractedConcept } from '../utils/concept-extractor.js';
-import { TransparencyReport } from '../utils/transparency.js';
+import { ExtractedConcept } from "../utils/concept-extractor.js";
+import { TransparencyReport } from "../utils/transparency.js";
 /**
  * Association hint - used to suggest directions, not determine them
+ * Dynamically computed from graph structure
  */
 interface AssociationHint {
     concept: string;
     direction: string;
     distanceRange: [number, number];
+    confidence?: number;
+    source?: "graph" | "embedding" | "fallback";
 }
 export interface SemanticDriftInput {
     anchorConcept: string;
@@ -35,9 +32,15 @@ export interface SemanticDriftInput {
 export interface SemanticDriftOutput {
     scaffold: CreativeScaffold;
     llmPrompt: string;
+    anchorConcept: string;
     suggestedDirection: string;
     explorationPath: string[];
     driftDistance: number;
+    computedCandidates?: Array<{
+        concept: string;
+        distance: number;
+    }>;
+    embeddingProvider?: string;
     associationHints: AssociationHint[];
     bridgeSuggestions: string[];
     explanation: string;
@@ -52,10 +55,7 @@ export interface SemanticDriftOutput {
 export declare class SemanticDriftTool {
     private dreamGraph;
     constructor(dreamGraph: DreamGraph);
-    performDrift(input: SemanticDriftInput): SemanticDriftOutput;
-    private getAssociationHints;
-    private generateGenericHints;
-    private getCrossDomainBridges;
+    performDrift(input: SemanticDriftInput): Promise<SemanticDriftOutput>;
     private generateDriftGuidance;
     private createExplanation;
     private updateDreamGraph;

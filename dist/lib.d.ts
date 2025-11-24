@@ -67,9 +67,9 @@ export declare class AssociativeDreamingServer {
      * Process a request to the Associative Dreaming server
      * V2.0: Now returns scaffold-based outputs with LLM prompts
      */
-    processDream(input: unknown): AssociativeDreamingOutput;
+    processDream(input: unknown): Promise<AssociativeDreamingOutput>;
     /**
-     * Format scaffold output to emphasize the LLM prompt
+     * Format scaffold output - SIMPLIFIED for direct LLM processing
      */
     private formatScaffoldOutput;
     /**

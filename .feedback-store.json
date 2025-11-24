@@ -1,0 +1,118 @@
+{
+  "feedbackHistory": [
+    {
+      "toolName": "semantic_drift",
+      "timestamp": 1763949743057,
+      "inputParams": {
+        "anchorConcept": "blockchain",
+        "driftMagnitude": 0.7,
+        "temperature": 0.8
+      },
+      "qualityRating": 8,
+      "actualDistance": 0.68,
+      "destinationConcept": "decentralization",
+      "hintsQuality": "just_right",
+      "surpriseLevel": 7,
+      "coherenceLevel": 8
+    },
+    {
+      "toolName": "semantic_drift",
+      "timestamp": 1763949749610,
+      "inputParams": {
+        "anchorConcept": "cryptocurrency",
+        "driftMagnitude": 0.6,
+        "temperature": 0.7
+      },
+      "qualityRating": 9,
+      "actualDistance": 0.58,
+      "destinationConcept": "quantum computing",
+      "hintsQuality": "just_right",
+      "surpriseLevel": 9,
+      "coherenceLevel": 9
+    },
+    {
+      "toolName": "semantic_drift",
+      "timestamp": 1763949761603,
+      "inputParams": {
+        "anchorConcept": "smart contracts",
+        "driftMagnitude": 0.65,
+        "temperature": 0.75
+      },
+      "qualityRating": 9,
+      "actualDistance": 0.63,
+      "destinationConcept": "legal automation",
+      "hintsQuality": "just_right",
+      "surpriseLevel": 6,
+      "coherenceLevel": 8
+    },
+    {
+      "toolName": "semantic_drift",
+      "timestamp": 1763950189232,
+      "inputParams": {
+        "anchorConcept": "blockchain",
+        "driftMagnitude": 0.7,
+        "temperature": 0.8
+      },
+      "qualityRating": 9,
+      "actualDistance": 0.71,
+      "destinationConcept": "coral reef ecosystems",
+      "hintsQuality": "just_right",
+      "surpriseLevel": 8,
+      "coherenceLevel": 9
+    },
+    {
+      "toolName": "semantic_drift",
+      "timestamp": 1763950195014,
+      "inputParams": {
+        "anchorConcept": "blockchain technology",
+        "driftMagnitude": 0.68,
+        "temperature": 0.78
+      },
+      "qualityRating": 8,
+      "actualDistance": 0.66,
+      "destinationConcept": "mycelium networks",
+      "hintsQuality": "just_right",
+      "surpriseLevel": 9,
+      "coherenceLevel": 8
+    }
+  ],
+  "learnedParams": [
+    [
+      ".*blockchain.*",
+      {
+        "conceptPattern": ".*blockchain.*",
+        "sampleSize": 3,
+        "avgQuality": 8.333333333333334,
+        "avgDistance": 0.6833333333333335,
+        "successRate": 1,
+        "optimalMagnitude": 0.7,
+        "optimalTemperature": 0.8
+      }
+    ],
+    [
+      ".*cryptocurrency.*",
+      {
+        "conceptPattern": ".*cryptocurrency.*",
+        "sampleSize": 1,
+        "avgQuality": 9,
+        "avgDistance": 0.58,
+        "successRate": 1,
+        "optimalMagnitude": 0.6,
+        "optimalTemperature": 0.7
+      }
+    ],
+    [
+      ".*smart.*",
+      {
+        "conceptPattern": ".*smart.*",
+        "sampleSize": 1,
+        "avgQuality": 9,
+        "avgDistance": 0.63,
+        "successRate": 1,
+        "optimalMagnitude": 0.65,
+        "optimalTemperature": 0.75
+      }
+    ]
+  ],
+  "savedAt": 1763950195014
+}

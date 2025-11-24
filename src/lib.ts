@@ -94,10 +94,12 @@ export class AssociativeDreamingServer {
    * Process a request to the Associative Dreaming server
    * V2.0: Now returns scaffold-based outputs with LLM prompts
    */
-  public processDream(input: unknown): AssociativeDreamingOutput {
+  public async processDream(
+    input: unknown,
+  ): Promise<AssociativeDreamingOutput> {
     try {
       const validatedInput = this.validateInput(input);
-      const result = this.executeToolRequest(validatedInput);
+      const result = await this.executeToolRequest(validatedInput);
 
       // Log the result if logging is enabled
       const config = getConfig();
@@ -137,121 +139,103 @@ export class AssociativeDreamingServer {
   }
 
   /**
-   * Format scaffold output to emphasize the LLM prompt
+   * Format scaffold output - SIMPLIFIED for direct LLM processing
    */
   private formatScaffoldOutput(toolName: string, result: any): string {
+    // PHILOSOPHY CHANGE:
+    // The LLM should receive the PROMPT directly, not metadata about the prompt.
+    // Move all "what this is" explanations to the end as optional context.
+
     const output: string[] = [];
 
-    // Add header
-    output.push(
-      `═══════════════════════════════════════════════════════════════`,
-    );
-    output.push(
-      `  ${toolName.toUpperCase().replace("_", " ")} - LLM SCAFFOLD OUTPUT`,
-    );
-    output.push(
-      `═══════════════════════════════════════════════════════════════`,
-    );
-    output.push("");
-
-    // Add the explanation first
-    if (result.explanation) {
-      output.push(result.explanation);
-      output.push("");
-    }
-
-    // Add the LLM prompt section (most important)
+    // IMMEDIATE: The actual prompt the LLM should process
     if (result.llmPrompt) {
-      output.push(
-        `───────────────────────────────────────────────────────────────`,
-      );
-      output.push(`  LLM PROMPT (Process this for genuine insight)`);
-      output.push(
-        `───────────────────────────────────────────────────────────────`,
-      );
-      output.push("");
       output.push(result.llmPrompt);
       output.push("");
+    } else {
+      // Fallback for tools that don't use scaffolds yet
+      output.push(`Tool: ${toolName}`);
+      output.push(JSON.stringify(result, null, 2));
+      return output.join("\n");
     }
 
-    // Add key data in compact form
+    // OPTIONAL CONTEXT (at the end, for reference only)
     output.push(
       `───────────────────────────────────────────────────────────────`,
     );
-    output.push(`  KEY DATA`);
+    output.push(`  📊 MCP METADATA (for reference)`);
     output.push(
       `───────────────────────────────────────────────────────────────`,
     );
 
-    // Tool-specific key data
+    // Tool-specific metadata in compact form
+    const metadata: string[] = [];
+
     switch (toolName) {
       case "semantic_drift":
-        output.push(`  Anchor: "${result.driftPath?.[0] || "N/A"}"`);
-        output.push(
-          `  Target Distance: ${((result.driftDistance || 0) * 100).toFixed(0)}%`,
+        metadata.push(`Tool: semantic_drift`);
+        metadata.push(`Anchor: "${result.anchorConcept || "N/A"}"`);
+        metadata.push(
+          `Target distance: ${((result.driftDistance || 0) * 100).toFixed(0)}%`,
         );
-        output.push(
-          `  Association Hints: ${result.associationHints?.length || 0}`,
+
+                if (result.computedCandidates && result.computedCandidates.length > 0) {
+          metadata.push(
+            `Embedding provider: ${result.embeddingProvider || "unknown"}`,
+          );
+          metadata.push(`Computed candidates at target distance:`);
+          result.computedCandidates.forEach((c: any, i: number) => {
+            metadata.push(
+              `  ${i + 1}. "${c.concept}" (${(c.distance * 100).toFixed(0)}% distant)`,
+            );
+          });
+        } else {
+          metadata.push(`Computed candidates: None (using hints only)`);
+        }
+
+        metadata.push(
+          `Hints provided: ${result.associationHints?.length || 0}`,
+        );
+        metadata.push(
+          `Bridges suggested: ${result.bridgeSuggestions?.length || 0}`,
         );
         break;
 
       case "bisociative_synthesis":
-        output.push(`  Matrix A: "${result.matrixA}"`);
-        output.push(`  Matrix B: "${result.matrixB}"`);
-        output.push(`  Pattern: ${result.suggestedPattern}`);
+        metadata.push(`Tool: bisociative_synthesis`);
+        metadata.push(`Matrix A: "${result.matrixA}"`);
+        metadata.push(`Matrix B: "${result.matrixB}"`);
+        metadata.push(
+          `Pattern hint: ${result.suggestedPattern || "auto-select"}`,
+        );
         break;
 
       case "oblique_constraint":
-        output.push(`  Constraint: "${result.constraint}"`);
-        output.push(`  Type: ${result.constraintType}`);
+        metadata.push(`Tool: oblique_constraint`);
+        metadata.push(`Type: ${result.constraintType}`);
         break;
 
       case "serendipity_scan":
-        output.push(`  Scan Type: ${result.scanType}`);
-        output.push(
-          `  Serendipity Score: ${((result.serendipityScore || 0) * 100).toFixed(0)}%`,
+        metadata.push(`Tool: serendipity_scan`);
+        metadata.push(`Scan type: ${result.scanType}`);
+        metadata.push(
+          `Novelty target: ${((result.noveltyThreshold || 0.5) * 100).toFixed(0)}%`,
         );
-        output.push(
-          `  Extracted Concepts: ${result.extractedConcepts?.length || 0}`,
+        metadata.push(
+          `Concepts extracted: ${result.extractedConcepts?.length || 0}`,
         );
         break;
 
       case "meta_association":
-        output.push(
-          `  Concepts: ${result.extractedConcepts?.filter((c: any) => c.type === "primary").length || 0}`,
-        );
-        output.push(`  Collisions: ${result.collisionMap?.length || 0}`);
-        output.push(
-          `  Chaos Target: ${((result.weirdnessTarget || 0) * 100).toFixed(0)}%`,
+        metadata.push(`Tool: meta_association`);
+        metadata.push(`Prior outputs: ${result.priorOutputs?.length || 0}`);
+        metadata.push(
+          `Chaos intensity: ${((result.chaosIntensity || 0.7) * 100).toFixed(0)}%`,
         );
         break;
     }
 
-    output.push("");
-    output.push(
-      `═══════════════════════════════════════════════════════════════`,
-    );
-    output.push(`  HOW TO USE THIS OUTPUT`);
-    output.push(
-      `═══════════════════════════════════════════════════════════════`,
-    );
-    output.push("");
-    output.push(
-      '  The "LLM PROMPT" section above is designed to be processed by',
-    );
-    output.push(
-      "  Claude to generate genuine creative insight. The server provides",
-    );
-    output.push("  STRUCTURE; the LLM provides CREATIVITY.");
-    output.push("");
-    output.push("  To get the actual insight:");
-    output.push("  1. Copy the LLM PROMPT section");
-    output.push(
-      "  2. Send it to Claude (or process it in your Claude integration)",
-    );
-    output.push(
-      "  3. The response will contain justified, traceable creative leaps",
-    );
+    output.push(metadata.map((m) => `  ${m}`).join("\n"));
     output.push("");
 
     return output.join("\n");
@@ -294,11 +278,13 @@ export class AssociativeDreamingServer {
   /**
    * Executes the appropriate tool based on the input
    */
-  private executeToolRequest(input: AssociativeDreamingInput): unknown {
+  private async executeToolRequest(
+    input: AssociativeDreamingInput,
+  ): Promise<unknown> {
     try {
       switch (input.tool) {
         case "semantic_drift":
-          return this.semanticDriftTool.performDrift(input.input);
+          return await this.semanticDriftTool.performDrift(input.input);
 
         case "bisociative_synthesis":
           return this.bisociativeSynthesisTool.performSynthesis(input.input);

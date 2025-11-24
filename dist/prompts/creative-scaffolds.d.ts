@@ -18,7 +18,7 @@
 /**
  * Scaffold types that guide different kinds of creative reasoning
  */
-export type ScaffoldType = 'bisociative_bridge' | 'semantic_leap' | 'constraint_reframe' | 'serendipity_mine' | 'meta_collision' | 'because_chain' | 'structural_mapping' | 'inversion_probe' | 'analogy_generator' | 'blind_spot_finder';
+export type ScaffoldType = "bisociative_bridge" | "semantic_leap" | "constraint_reframe" | "serendipity_mine" | "meta_collision" | "because_chain" | "structural_mapping" | "inversion_probe" | "analogy_generator" | "blind_spot_finder";
 /**
  * A creative scaffold - structured prompt for LLM reasoning
  */
@@ -39,7 +39,7 @@ export interface ResponseSection {
     name: string;
     instruction: string;
     required: boolean;
-    format?: 'paragraph' | 'bullet_list' | 'single_line' | 'structured';
+    format?: "paragraph" | "bullet_list" | "single_line" | "structured";
 }
 export interface ScaffoldContext {
     /** The user's original input/problem */
@@ -86,12 +86,12 @@ export declare function generateSemanticLeapScaffold(anchorConcept: string, drif
  * Generate a serendipity mining scaffold
  * Works even with empty graph by mining the user's context for unexpected connections
  */
-export declare function generateSerendipityMiningScaffold(currentContext: string, noveltyThreshold: number, scanType: 'bridge' | 'gap' | 'pattern' | 'random', graphState?: GraphStateContext): CreativeScaffold;
+export declare function generateSerendipityMiningScaffold(currentContext: string, noveltyThreshold: number, scanType: "bridge" | "gap" | "pattern" | "random", graphState?: GraphStateContext): CreativeScaffold;
 /**
  * Generate a constraint reframe scaffold
  * Instead of random oblique strategies, guide Claude to apply constraints meaningfully
  */
-export declare function generateConstraintReframeScaffold(currentBlock: string, constraintType: 'oblique' | 'scamper' | 'inversion' | 'random', userContext?: string): CreativeScaffold;
+export declare function generateConstraintReframeScaffold(currentBlock: string, constraintType: "oblique" | "scamper" | "inversion" | "random", userContext?: string): CreativeScaffold;
 /**
  * Generate a meta-collision scaffold
  * Forces prior outputs to collide in ways that produce genuine insight, not just weirdness
@@ -105,7 +105,7 @@ export declare function generateMetaCollisionScaffold(priorOutputs: PriorOutput[
 /**
  * Format a scaffold into a prompt that can be returned to the LLM
  */
-export declare function formatScaffoldAsPrompt(scaffold: CreativeScaffold): string;
+export declare function formatScaffoldAsPrompt(scaffold: CreativeScaffold, includeHandshake?: boolean): string;
 /**
  * Format scaffold as structured JSON for programmatic parsing
  */
