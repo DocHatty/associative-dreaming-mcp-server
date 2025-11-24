@@ -1139,7 +1139,12 @@ After the full sequence, present:
   }
 });
 
-// Start the server
+/**
+ * Start the MCP server and attach it to the stdio transport.
+ *
+ * Creates a StdioServerTransport, connects the module's server to that transport,
+ * and emits an informational startup log message.
+ */
 async function runServer() {
   const transport = new StdioServerTransport();
   await server.connect(transport);

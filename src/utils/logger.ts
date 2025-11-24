@@ -11,6 +11,15 @@ const levelPriority: Record<LogLevel, number> = {
   error: 3,
 };
 
+/**
+ * Determines whether a message at the given log level should be emitted based on current configuration.
+ *
+ * When global logging is disabled, only `"error"` level messages are permitted; otherwise the decision
+ * is made by comparing the requested level's priority against the configured minimum logging level.
+ *
+ * @param level - The log level to check
+ * @returns `true` if messages at `level` should be logged under the current configuration, `false` otherwise
+ */
 function shouldLog(level: LogLevel): boolean {
   const config = getConfig();
 
@@ -21,6 +30,12 @@ function shouldLog(level: LogLevel): boolean {
   return levelPriority[level] >= levelPriority[config.logging.level];
 }
 
+/**
+ * Format a log level label, optionally applying ANSI color styling.
+ *
+ * @param colorized - If true, return the label wrapped with color formatting; otherwise return plain uppercase text.
+ * @returns The uppercase label for `level`. When `colorized` is true, the label includes ANSI color styling. 
+ */
 function formatLevel(level: LogLevel, colorized: boolean): string {
   if (!colorized) return level.toUpperCase();
 
@@ -36,6 +51,15 @@ function formatLevel(level: LogLevel, colorized: boolean): string {
   }
 }
 
+/**
+ * Emits a formatted log message to stderr.
+ *
+ * Respects runtime logging configuration for enabled levels, minimum level threshold, timestamp inclusion, and colorization. When `details` is provided and non-empty, its JSON representation is appended to the log line.
+ *
+ * @param level - The severity level of the log entry.
+ * @param message - The primary log message text.
+ * @param details - Optional metadata to include with the log; serialized to JSON when non-empty.
+ */
 export function log(
   level: LogLevel,
   message: string,
@@ -55,6 +79,16 @@ export function log(
   console.error(`${timestamp}${levelLabel}: ${message}${detailsText}`);
 }
 
+/**
+ * Normalize various error shapes and emit a structured "error" log.
+ *
+ * If `error` is a DreamError, logs its message with `code` and the error's own context merged with `context`.
+ * If `error` is a native `Error`, logs its message with the `stack` and `context`.
+ * Otherwise logs "Unknown error" with the raw `error` value and `context`.
+ *
+ * @param error - The error to normalize and log
+ * @param context - Additional contextual key/value pairs to include with the logged error
+ */
 export function logError(
   error: unknown,
   context: Record<string, unknown> = {},
