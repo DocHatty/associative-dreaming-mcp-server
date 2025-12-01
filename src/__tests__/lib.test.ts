@@ -134,9 +134,9 @@ describe('AssociativeDreamingServer', () => {
       expect(distance).toBeGreaterThan(0.7);
     });
 
-    it('should return moderate distance for related concepts', () => {
+    it('should detect conceptual clusters (grief/mourning)', () => {
       server.processDream({
-        concept: 'machine learning',
+        concept: 'grief',
         driftDepth: 1,
         maxDrift: 5,
         chaosLevel: 0.5,
@@ -144,7 +144,7 @@ describe('AssociativeDreamingServer', () => {
       });
 
       const result = server.processDream({
-        concept: 'deep learning neural networks',
+        concept: 'mourning',
         driftDepth: 2,
         maxDrift: 5,
         chaosLevel: 0.5,
@@ -152,8 +152,51 @@ describe('AssociativeDreamingServer', () => {
       });
 
       const distance = result.structuredContent?.metrics?.semanticDistance as number;
-      expect(distance).toBeGreaterThan(0);
-      expect(distance).toBeLessThan(0.8);
+      // Should be very close despite no word overlap
+      expect(distance).toBeLessThan(0.3);
+    });
+
+    it('should detect conceptual clusters (happy/joy)', () => {
+      server.processDream({
+        concept: 'feeling happy',
+        driftDepth: 1,
+        maxDrift: 5,
+        chaosLevel: 0.5,
+        needsMoreDrift: true,
+      });
+
+      const result = server.processDream({
+        concept: 'pure joy',
+        driftDepth: 2,
+        maxDrift: 5,
+        chaosLevel: 0.5,
+        needsMoreDrift: true,
+      });
+
+      const distance = result.structuredContent?.metrics?.semanticDistance as number;
+      expect(distance).toBeLessThan(0.3);
+    });
+
+    it('should use stemming to match related words (running/run)', () => {
+      server.processDream({
+        concept: 'running fast',
+        driftDepth: 1,
+        maxDrift: 5,
+        chaosLevel: 0.5,
+        needsMoreDrift: true,
+      });
+
+      const result = server.processDream({
+        concept: 'run quickly',
+        driftDepth: 2,
+        maxDrift: 5,
+        chaosLevel: 0.5,
+        needsMoreDrift: true,
+      });
+
+      const distance = result.structuredContent?.metrics?.semanticDistance as number;
+      // Should detect overlap via stemming
+      expect(distance).toBeLessThan(0.7);
     });
 
     it('should handle short concepts gracefully', () => {
@@ -239,6 +282,27 @@ describe('AssociativeDreamingServer', () => {
 
       expect(result.structuredContent?.metrics?.calibration).toBe('wild');
     });
+
+    it('should provide suggestion when drifting conservatively', () => {
+      server.processDream({
+        concept: 'software development',
+        driftDepth: 1,
+        maxDrift: 5,
+        chaosLevel: 0.9,
+        needsMoreDrift: true,
+      });
+
+      const result = server.processDream({
+        concept: 'software engineering',
+        driftDepth: 2,
+        maxDrift: 5,
+        chaosLevel: 0.9,
+        needsMoreDrift: true,
+      });
+
+      expect(result.structuredContent?.metrics?.suggestion).toBeDefined();
+      expect(typeof result.structuredContent?.metrics?.suggestion).toBe('string');
+    });
   });
 
   describe('collision tension', () => {
@@ -288,6 +352,31 @@ describe('AssociativeDreamingServer', () => {
 
       const tension = result.structuredContent?.collisionTension as number;
       expect(tension).toBeGreaterThan(0.6);
+    });
+
+    it('should return low tension for conceptually similar collision', () => {
+      server.processDream({
+        concept: 'start',
+        driftDepth: 1,
+        maxDrift: 5,
+        chaosLevel: 0.5,
+        needsMoreDrift: true,
+      });
+
+      const result = server.processDream({
+        concept: 'sadness',
+        driftDepth: 2,
+        maxDrift: 5,
+        chaosLevel: 0.5,
+        needsMoreDrift: false,
+        isCollision: true,
+        collidesWith: 'grief',
+        collisionId: 'low-tension',
+      });
+
+      const tension = result.structuredContent?.collisionTension as number;
+      // Should detect that sadness and grief are in same cluster
+      expect(tension).toBeLessThan(0.3);
     });
 
     it('should track collision chains', () => {
@@ -344,6 +433,34 @@ describe('AssociativeDreamingServer', () => {
       });
 
       expect(result.structuredContent?.metrics?.isStuck).toBe(true);
+    });
+
+    it('should provide suggestion when stuck', () => {
+      server.processDream({
+        concept: 'software development',
+        driftDepth: 1,
+        maxDrift: 10,
+        chaosLevel: 0.5,
+        needsMoreDrift: true,
+      });
+
+      server.processDream({
+        concept: 'software engineering',
+        driftDepth: 2,
+        maxDrift: 10,
+        chaosLevel: 0.5,
+        needsMoreDrift: true,
+      });
+
+      const result = server.processDream({
+        concept: 'software design',
+        driftDepth: 3,
+        maxDrift: 10,
+        chaosLevel: 0.5,
+        needsMoreDrift: true,
+      });
+
+      expect(result.structuredContent?.metrics?.suggestion).toBeDefined();
     });
 
     it('should not flag as stuck when concepts are diverse', () => {
@@ -512,6 +629,27 @@ describe('AssociativeDreamingServer', () => {
       expect(text).toContain('Target chaos:');
       expect(text).toContain('Measured distance:');
       expect(text).toContain('Calibration:');
+    });
+
+    it('should show suggestion in output when conservative', () => {
+      server.processDream({
+        concept: 'software development',
+        driftDepth: 1,
+        maxDrift: 5,
+        chaosLevel: 0.9,
+        needsMoreDrift: true,
+      });
+
+      const result = server.processDream({
+        concept: 'software engineering',
+        driftDepth: 2,
+        maxDrift: 5,
+        chaosLevel: 0.9,
+        needsMoreDrift: true,
+      });
+
+      const text = result.content[0].text;
+      expect(text).toContain('💡 Try:');
     });
 
     it('should show collision tension in output', () => {

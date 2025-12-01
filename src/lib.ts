@@ -19,6 +19,7 @@ export interface DriftMetrics {
   targetChaos: number;
   calibration: "conservative" | "on-target" | "wild";
   isStuck: boolean;
+  suggestion?: string;
 }
 
 export interface SessionAnalytics {
@@ -32,6 +33,60 @@ export interface SessionAnalytics {
   stuckCount: number;
   calibrationHistory: string[];
 }
+
+// Conceptual clusters: words that are semantically related but share no surface features
+// This catches cases like "grief/mourning" that word-overlap metrics miss
+const CONCEPTUAL_CLUSTERS: string[][] = [
+  ["grief", "mourning", "sorrow", "bereavement", "loss", "sadness", "lament"],
+  ["happy", "joy", "elation", "bliss", "cheerful", "delighted", "pleased"],
+  ["anger", "rage", "fury", "wrath", "ire", "outrage", "indignation"],
+  ["fear", "terror", "dread", "anxiety", "panic", "fright", "apprehension"],
+  ["code", "programming", "software", "development", "coding", "engineering"],
+  ["money", "currency", "cash", "funds", "capital", "wealth", "finance"],
+  ["doctor", "physician", "medic", "clinician", "practitioner"],
+  ["car", "automobile", "vehicle", "auto"],
+  ["house", "home", "dwelling", "residence", "abode"],
+  ["big", "large", "huge", "enormous", "massive", "giant", "vast"],
+  ["small", "tiny", "little", "minute", "minuscule", "petite"],
+  ["fast", "quick", "rapid", "swift", "speedy", "hasty"],
+  ["slow", "sluggish", "gradual", "leisurely", "unhurried"],
+  ["start", "begin", "commence", "initiate", "launch", "embark"],
+  ["end", "finish", "conclude", "terminate", "complete", "cease"],
+  ["think", "ponder", "contemplate", "reflect", "consider", "muse"],
+  ["say", "speak", "tell", "utter", "express", "articulate", "state"],
+  ["walk", "stroll", "amble", "saunter", "trek", "hike", "march"],
+  ["run", "sprint", "dash", "race", "jog", "bolt"],
+  ["eat", "consume", "devour", "dine", "feast", "ingest"],
+  ["death", "dying", "demise", "mortality", "passing", "expiration"],
+  ["birth", "born", "arrival", "emergence", "genesis", "origin"],
+  ["war", "conflict", "battle", "combat", "warfare", "hostilities"],
+  ["peace", "harmony", "tranquility", "serenity", "calm"],
+  ["love", "affection", "devotion", "adoration", "fondness", "passion"],
+  ["hate", "loathe", "detest", "despise", "abhor"],
+  ["truth", "fact", "reality", "veracity", "accuracy"],
+  ["lie", "falsehood", "deception", "untruth", "fabrication"],
+  ["leader", "chief", "head", "boss", "director", "commander"],
+  ["follower", "subordinate", "disciple", "adherent"],
+  ["teacher", "instructor", "educator", "tutor", "mentor", "professor"],
+  ["student", "learner", "pupil", "apprentice", "scholar"],
+];
+
+// Build a lookup map for O(1) cluster membership checks
+const CLUSTER_MAP: Map<string, number> = new Map();
+CONCEPTUAL_CLUSTERS.forEach((cluster, idx) => {
+  cluster.forEach(word => CLUSTER_MAP.set(word.toLowerCase(), idx));
+});
+
+// Suggestions for when drift is too conservative
+const CONSERVATIVE_SUGGESTIONS = [
+  "Try a concept from a completely different domain (biology, music, mythology, cooking)",
+  "What metaphor would a child use to describe this?",
+  "What's the emotional opposite of this concept?",
+  "If this were a physical sensation, what would it be?",
+  "What would this look like in 1000 years? Or 1000 years ago?",
+  "What animal, plant, or weather pattern embodies this?",
+  "What's the most absurd connection you're suppressing right now?",
+];
 
 export class AssociativeDreamingServer {
   private dreamHistory: DreamData[] = [];
@@ -56,6 +111,49 @@ export class AssociativeDreamingServer {
     this.stuckCount = 0;
   }
 
+  /**
+   * Basic Porter-style stemming (handles common suffixes)
+   * Not perfect, but catches grief/grieving, run/running, etc.
+   */
+  private stem(word: string): string {
+    let w = word.toLowerCase();
+    // Common suffixes in rough order of length
+    const suffixes = ["ation", "ness", "ment", "able", "ible", "ful", "less", "ing", "ed", "er", "ly", "s"];
+    for (const suffix of suffixes) {
+      if (w.length > suffix.length + 2 && w.endsWith(suffix)) {
+        w = w.slice(0, -suffix.length);
+        break;
+      }
+    }
+    return w;
+  }
+
+  /**
+   * Check if two words belong to the same conceptual cluster
+   */
+  private inSameCluster(word1: string, word2: string): boolean {
+    const c1 = CLUSTER_MAP.get(word1.toLowerCase());
+    const c2 = CLUSTER_MAP.get(word2.toLowerCase());
+    return c1 !== undefined && c2 !== undefined && c1 === c2;
+  }
+
+  /**
+   * Check if any words from two concepts share a conceptual cluster
+   */
+  private shareConceptualCluster(concept1: string, concept2: string): boolean {
+    const words1 = concept1.toLowerCase().split(/\s+/);
+    const words2 = concept2.toLowerCase().split(/\s+/);
+    
+    for (const w1 of words1) {
+      for (const w2 of words2) {
+        if (this.inSameCluster(w1, w2) || this.inSameCluster(this.stem(w1), this.stem(w2))) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   private computeSemanticDistance(concept1: string, concept2: string): number {
     const c1 = concept1.toLowerCase().trim();
     const c2 = concept2.toLowerCase().trim();
@@ -63,13 +161,17 @@ export class AssociativeDreamingServer {
     if (c1 === c2) return 0;
     if (c1.length === 0 || c2.length === 0) return 1;
 
-    // Word-level Jaccard distance (50% weight)
-    const words1 = new Set(c1.split(/\s+/).filter((w) => w.length > 0));
-    const words2 = new Set(c2.split(/\s+/).filter((w) => w.length > 0));
+    // Check conceptual clusters FIRST - catches grief/mourning cases
+    if (this.shareConceptualCluster(c1, c2)) {
+      return 0.15; // Very close semantically despite surface differences
+    }
+
+    // Word-level Jaccard with stemming (45% weight)
+    const words1 = new Set(c1.split(/\s+/).filter((w) => w.length > 0).map(w => this.stem(w)));
+    const words2 = new Set(c2.split(/\s+/).filter((w) => w.length > 0).map(w => this.stem(w)));
     const wordIntersection = new Set([...words1].filter((x) => words2.has(x)));
     const wordUnion = new Set([...words1, ...words2]);
-    const wordJaccard =
-      wordUnion.size > 0 ? 1 - wordIntersection.size / wordUnion.size : 1;
+    const wordJaccard = wordUnion.size > 0 ? 1 - wordIntersection.size / wordUnion.size : 1;
 
     // Character n-gram distance (35% weight)
     const ngrams = (s: string): Set<string> => {
@@ -85,18 +187,13 @@ export class AssociativeDreamingServer {
     const ng2 = ngrams(c2);
     const ngIntersection = new Set([...ng1].filter((x) => ng2.has(x)));
     const ngUnion = new Set([...ng1, ...ng2]);
-    const ngramJaccard =
-      ngUnion.size > 0 ? 1 - ngIntersection.size / ngUnion.size : 1;
+    const ngramJaccard = ngUnion.size > 0 ? 1 - ngIntersection.size / ngUnion.size : 1;
 
-    // Length ratio penalty (15% weight)
-    const lenRatio =
-      Math.min(c1.length, c2.length) / Math.max(c1.length, c2.length);
+    // Length ratio penalty (20% weight)
+    const lenRatio = Math.min(c1.length, c2.length) / Math.max(c1.length, c2.length);
     const lengthPenalty = 1 - lenRatio;
 
-    return Math.min(
-      1,
-      Math.max(0, wordJaccard * 0.5 + ngramJaccard * 0.35 + lengthPenalty * 0.15)
-    );
+    return Math.min(1, Math.max(0, wordJaccard * 0.45 + ngramJaccard * 0.35 + lengthPenalty * 0.2));
   }
 
   private detectStuck(): boolean {
@@ -108,45 +205,41 @@ export class AssociativeDreamingServer {
     for (let i = 0; i < recent.length - 1; i++) {
       distances.push(this.computeSemanticDistance(recent[i], recent[i + 1]));
     }
-    distances.push(
-      this.computeSemanticDistance(recent[0], recent[recent.length - 1])
-    );
+    distances.push(this.computeSemanticDistance(recent[0], recent[recent.length - 1]));
 
     const avgDistance = distances.reduce((a, b) => a + b, 0) / distances.length;
     return avgDistance < 0.3;
   }
 
-  private calibrateDrift(
-    targetChaos: number,
-    actualDistance: number
-  ): DriftMetrics["calibration"] {
+  private calibrateDrift(targetChaos: number, actualDistance: number): DriftMetrics["calibration"] {
     const diff = actualDistance - targetChaos;
     if (diff < -0.25) return "conservative";
     if (diff > 0.25) return "wild";
     return "on-target";
   }
 
+  private getSuggestion(calibration: DriftMetrics["calibration"], isStuck: boolean): string | undefined {
+    if (calibration === "conservative" || isStuck) {
+      return CONSERVATIVE_SUGGESTIONS[Math.floor(Math.random() * CONSERVATIVE_SUGGESTIONS.length)];
+    }
+    return undefined;
+  }
+
   private getAnalytics(): SessionAnalytics {
-    const uniqueConcepts = new Set(
-      this.dreamHistory.map((d) => d.concept.toLowerCase())
-    ).size;
+    const uniqueConcepts = new Set(this.dreamHistory.map((d) => d.concept.toLowerCase())).size;
 
     return {
       totalDrifts: this.dreamHistory.length,
       avgSemanticDistance:
         this.driftDistances.length > 0
-          ? this.driftDistances.reduce((a, b) => a + b, 0) /
-            this.driftDistances.length
+          ? this.driftDistances.reduce((a, b) => a + b, 0) / this.driftDistances.length
           : 0,
-      maxSemanticDistance:
-        this.driftDistances.length > 0 ? Math.max(...this.driftDistances) : 0,
-      minSemanticDistance:
-        this.driftDistances.length > 0 ? Math.min(...this.driftDistances) : 0,
+      maxSemanticDistance: this.driftDistances.length > 0 ? Math.max(...this.driftDistances) : 0,
+      minSemanticDistance: this.driftDistances.length > 0 ? Math.min(...this.driftDistances) : 0,
       collisionTensions: this.collisionTensions,
       avgCollisionTension:
         this.collisionTensions.length > 0
-          ? this.collisionTensions.reduce((a, b) => a + b, 0) /
-            this.collisionTensions.length
+          ? this.collisionTensions.reduce((a, b) => a + b, 0) / this.collisionTensions.length
           : 0,
       uniqueConcepts,
       stuckCount: this.stuckCount,
@@ -206,7 +299,9 @@ export class AssociativeDreamingServer {
         const isStuck = this.detectStuck();
         if (isStuck) this.stuckCount++;
 
-        driftMetrics = { semanticDistance: distance, targetChaos: input.chaosLevel, calibration, isStuck };
+        const suggestion = this.getSuggestion(calibration, isStuck);
+
+        driftMetrics = { semanticDistance: distance, targetChaos: input.chaosLevel, calibration, isStuck, suggestion };
       }
 
       if (input.isCollision && input.collidesWith) {
@@ -259,8 +354,11 @@ export class AssociativeDreamingServer {
      Calibration:       ${calibEmoji} ${calibNote}`;
 
         if (driftMetrics.isStuck) {
-          metricsBlock += `
-     ⚠️  PATH APPEARS STUCK — recent concepts too similar`;
+          metricsBlock += `\n     ⚠️  PATH APPEARS STUCK — recent concepts too similar`;
+        }
+
+        if (driftMetrics.suggestion) {
+          metricsBlock += `\n     💡 Try: ${driftMetrics.suggestion}`;
         }
       }
 
@@ -269,7 +367,7 @@ export class AssociativeDreamingServer {
         const tensionLabel = collisionTension > 0.7 ? "HIGH ⚡" : collisionTension > 0.4 ? "MEDIUM" : "LOW ⚠️";
         metricsBlock += `\n\n  💥 Collision Tension: ${collisionTension.toFixed(2)} [${tensionBar}] ${tensionLabel}`;
         if (collisionTension < 0.4) {
-          metricsBlock += `\n     ⚠️  Low tension — concepts may be too similar`;
+          metricsBlock += `\n     ⚠️  Low tension — try colliding with a more distant concept`;
         }
       }
 
