@@ -1,52 +1,34 @@
 {
-  "name": "@associative/server-associative-dreaming",
-  "version": "1.1.0",
-  "description": "MCP server for associative dreaming - lateral thinking and creative problem-solving through semantic drift, bisociation, and serendipity",
-  "main": "dist/index.js",
+  "name": "@modelcontextprotocol/server-associative-dreaming",
+  "version": "2.0.0",
+  "description": "MCP server for associative dreaming - the Yin to Sequential Thinking's Yang. Rhizomatic exploration through concept space.",
+  "license": "MIT",
+  "author": "",
+  "homepage": "https://modelcontextprotocol.io",
+  "bugs": "https://github.com/modelcontextprotocol/servers/issues",
   "type": "module",
   "bin": {
     "mcp-server-associative-dreaming": "dist/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
+    "postbuild": "node -e \"require('fs').chmodSync('dist/index.js', '755')\"",
     "prepare": "npm run build",
-    "start": "node dist/index.js",
+    "watch": "tsc --watch",
     "test": "vitest run --coverage"
   },
-  "keywords": [
-    "mcp",
-    "associative-dreaming",
-    "lateral-thinking",
-    "creativity",
-    "bisociation",
-    "semantic-drift",
-    "model-context-protocol",
-    "ai",
-    "reasoning",
-    "divergent-thinking",
-    "serendipity",
-    "oblique-strategies"
-  ],
-  "author": "",
-  "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.22.0",
+    "@modelcontextprotocol/sdk": "^1.23.0",
     "chalk": "^5.3.0",
-    "compromise": "^14.14.2",
-    "natural": "^7.0.7",
-    "stopword": "^3.1.1",
-    "zod": "^4.1.12"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@types/natural": "^5.1.5",
-    "@types/node": "^22.19.1",
-    "@vitest/coverage-v8": "^4.0.14",
-    "typescript": "^5.7.2",
-    "vitest": "^4.0.14"
-  },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ]
+    "@types/node": "^22",
+    "@vitest/coverage-v8": "^4.0.0",
+    "typescript": "^5.3.3",
+    "vitest": "^4.0.0"
+  }
 }

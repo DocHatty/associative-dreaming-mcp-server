@@ -1,8 +1,13 @@
 #!/usr/bin/env node
 /**
- * Associative Dreaming MCP Server - Entry Point
+ * Associative Dreaming MCP Server
  *
- * This is the main entry point for the Associative Dreaming MCP server.
- * It sets up the server, registers the tools, and connects to the MCP transport.
+ * The Yin to Sequential Thinking's Yang.
+ *
+ * Sequential Thinking: Linear thought progression with revision/branching
+ * Associative Dreaming: Rhizomatic concept wandering with return/collision
+ *
+ * ONE TOOL. The LLM does all the creative work.
+ * The server just tracks where the mind has wandered.
  */
 export {};

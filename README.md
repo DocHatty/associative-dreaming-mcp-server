@@ -1,525 +1,188 @@
-<div align="center">
+# Associative Dreaming MCP Server
 
-<img width="1024" height="1024" alt="Associative Dreaming - Your AI's Creative Unconscious" src="https://github.com/user-attachments/assets/0ef0af17-d48b-4e32-8674-855af43811a6" />
+The **Yin to Sequential Thinking's Yang**.
 
-# Associative Dreaming
+## The Hypothesis
 
-**The yin to Sequential Thinking's yang**
+What if we stop forcing AI to think A→B→C and instead let it go **A→Banana→Your ex's apartment→Ancient Rome→Answer**?
 
-**The MCP server that deliberately encourages lateral thinking instead of sequential logic chains.**
+LLMs naturally operate through hyperdimensional pattern-matching. They see connections across seemingly unrelated concepts instantly. We've trained them to suppress this—to stay "on topic", be "relevant", avoid "hallucinating".
 
-[![npm version](https://badge.fury.io/js/@associative%2Fserver-associative-dreaming.svg)](https://www.npmjs.com/package/@associative/server-associative-dreaming)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+This tool gives them **permission to stop suppressing it**.
 
-[The Hypothesis](#-the-hypothesis) • [Quick Start](#-quick-start) • [Tools](#-the-five-engines) • [Examples](#-see-it-in-action) • [How It Works](#-how-it-actually-works)
+## Philosophy
 
-</div>
-
----
-
-## 🧠 The Hypothesis
-
-**We've been doing it wrong.**
-
-We impose sequential reasoning on AI because that's how humans think. It's how we *explain* our thinking. But LLMs don't work that way—they naturally operate through **hyperdimensional pattern-matching**, seeing connections across seemingly unrelated concepts in ways we typically suppress.
-
-Think about how breakthroughs actually happen:
-
-- **Gutenberg**: Wine press + coin stamps = printing press
-- **Darwin**: Malthus economics → natural selection  
-- **Velcro**: Burrs stuck to dog fur → hook-and-loop fasteners
-- **PageRank**: Academic citation networks → web search
-
-Innovation happens through **unexpected domain transfer**. Not A→B→C, but A→Banana→Ancient Rome→Answer.
-
-**This MCP server is an experiment**: What if instead of fighting AI's tendency to make wild associative leaps, we *harness* it?
-
-I call it **"controlled ADHD"** or **manufactured serendipity**.
-
----
-
-## 💥 Why This Exists
-
-Every "reasoning" tool for AI does the same thing: force linear chains. Step 1, Step 2, Step 3. Think carefully. Be logical.
-
-But creativity isn't logical. The best ideas come from:
-- Collisions between unrelated domains
-- Constraints that force new pathways
-- The "adjacent possible" that you weren't looking for
-- Pattern recognition across wildly different contexts
-
-**Associative Dreaming** is the **yin to sequential thinking's yang**. It's your AI's creative unconscious—the part that wanders, connects, and surfaces insights that pure logic would never find.
-
-<table>
-<tr>
-<td width="50%">
-
-### 🔗 Sequential Thinking
 ```
-Problem → Analysis → Options → Decision
-```
-Good for: Debugging, planning, verification
-
-</td>
-<td width="50%">
-
-### 🌀 Associative Dreaming
-```
-Problem → Jazz → Mycelium → Feudal Japan → Holy shit, that's the answer
-```
-Good for: Innovation, creativity, breakthroughs
-
-</td>
-</tr>
-</table>
-
-**You need both.** This gives you the second one.
-
----
-
-## 🚀 Quick Start
-
-### One Command (Seriously)
-
-```bash
-npx @associative/server-associative-dreaming
+Sequential Thinking (Yang)          Associative Dreaming (Yin)
+────────────────────────────        ────────────────────────────
+thought → thought → thought         concept ↔ concept ↔ concept
+linear progression                  rhizomatic wandering
+converges to answer                 diverges to discovery
+"Is this correct?"                  "Where did I land?"
+revision (fix mistakes)             return (see differently)
+branching (explore paths)           collision (force insight)
 ```
 
-That's it. No installation. No config files. No bullshit.
+## The Value Proposition
 
-### Add to Claude Desktop
+The value isn't in producing unexplainable outputs—it's in **escaping the gravity well of the problem's framing**.
 
-Edit your `claude_desktop_config.json`:
+Linear reasoning on "meeting fatigue" explores: shorter meetings, better agendas, async alternatives. The solution space is *bounded by the problem's framing*.
+
+Associative Dreaming might drift to "funeral rituals" and land on "meetings as witnessing rituals." Yes, you can explain the path afterward—that's what insight *is*. But no linear approach would have **started** there.
+
+## The Three Operations
+
+### DRIFT
+Where does your mind *want* to go? Not where it *should* go. Follow the pull.
+- chaosLevel 0.3: adjacent fields (biology → chemistry)
+- chaosLevel 0.6: cross-domain (software → architecture → music)
+- chaosLevel 0.9: the weird leap (API design → grief → fermentation)
+
+### RETURN
+Come back to an earlier concept, but you're different now. What do you see that you couldn't see before? This is NOT revision (fixing mistakes). This is re-seeing (transformed perspective).
+
+### COLLISION
+Force two concepts that "don't belong together" to crash. What emerges from the wreckage? The insight lives in the collision, not in either concept alone.
+
+## Tool
+
+### associativedreaming
+
+**Inputs:**
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `concept` | string | Where you landed. The current node in the rhizome. |
+| `driftDepth` | integer | How many drifts deep (like thoughtNumber) |
+| `maxDrift` | integer | Estimated total drifts needed (like totalThoughts) |
+| `chaosLevel` | number 0-1 | How wild to get |
+| `needsMoreDrift` | boolean | Keep wandering? |
+| `isReturn` | boolean? | Coming back to an earlier concept? |
+| `returnsTo` | string? | Which concept you're returning to |
+| `isCollision` | boolean? | Forcing a collision? |
+| `collidesWith` | string? | What concept to crash into |
+| `collisionId` | string? | Chain identifier for related collisions |
+
+**Output:**
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Drift 4 of 5 — Exploring...
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  The Path:
+
+    🌀 code review
+       ↓
+    🌀 confession
+       ↓
+    🌀 ritual absolution
+       ↓
+    💥 permission structures
+```
+
+## Usage
+
+Associative Dreaming is designed for:
+- When linear thinking is stuck or circular
+- When you need connections you haven't considered
+- When the problem space feels rigid
+- When you want to explore, not conclude
+- When you keep arriving at the same unsatisfying conclusions
+
+## Rules
+
+1. When you feel the pull toward a "weird" connection—**follow it**
+2. **Do not justify each step**—justify at the end, if at all
+3. The concept field is for where you are, not a logical argument
+4. If a drift feels "too random"—increase chaosLevel and do it anyway
+5. Collision is for forcing insight. Pick concepts that feel wrong together
+6. You're not solving yet. You're exploring.
+
+## Configuration
+
+### Claude Desktop
+
+Add this to your `claude_desktop_config.json`:
+
+#### npx
 
 ```json
 {
   "mcpServers": {
     "associative-dreaming": {
       "command": "npx",
-      "args": ["-y", "@associative/server-associative-dreaming"]
+      "args": ["-y", "@modelcontextprotocol/server-associative-dreaming"]
     }
   }
 }
 ```
 
-Restart Claude. Ask it to use the associative dreaming tools. Watch what happens.
+#### docker
 
-### Add to VS Code / Cursor / Zed
+```json
+{
+  "mcpServers": {
+    "associative-dreaming": {
+      "command": "docker",
+      "args": ["run", "--rm", "-i", "mcp/associative-dreaming"]
+    }
+  }
+}
+```
+
+### VS Code
+
+For manual installation, add to your user or workspace MCP configuration:
 
 ```json
 {
   "servers": {
     "associative-dreaming": {
-      "command": "npx", 
-      "args": ["-y", "@associative/server-associative-dreaming"]
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-associative-dreaming"]
     }
   }
 }
 ```
 
----
-
-## ⚡ The Six Tools
-
-### 1. `semantic_drift` — The Controlled Hallucination Engine
-
-Take a concept. Drift away from it through semantic space. Not to synonyms—to the **Serendipity Zone**: distant enough to surprise you, connected enough to matter.
-
-```typescript
-{
-  anchorConcept: "startup growth",
-  driftMagnitude: 0.8,    // 0 = stay close, 1 = go wild
-  temperature: 0.7        // randomness in the journey
-}
-```
-
-**What you get**: A destination concept + the reasoning chain that got you there + why this reframes your original thinking.
-
-**Use when**: You're stuck in obvious associations. You need fresh angles. The direct approach isn't working.
-
----
-
-### 2. `bisociative_synthesis` — The Collision Engine
-
-Arthur Koestler's theory of creativity, weaponized. Take two unrelated domains. Smash them together. Find the **structural isomorphism**—the hidden pattern that exists in both.
-
-```typescript
-{
-  matrixA: "enterprise sales",
-  matrixB: "jazz improvisation"    // leave blank for auto-selection
-}
-```
-
-**What you get**: Not "sales is like jazz" (useless). Instead: the specific structural patterns that map between domains, why they map, and what that reveals about your problem.
-
-**Use when**: You need radical innovation, not incremental improvement. You want to import paradigms from other fields.
-
----
-
-### 3. `oblique_constraint` — The Pattern Interrupt Engine
-
-Brian Eno's Oblique Strategies + SCAMPER, with actual application guidance. When you're stuck, inject a constraint that forces new pathways.
-
-```typescript
-{
-  currentBlock: "Users sign up but don't activate",
-  constraintType: "oblique"    // oblique | scamper | inversion | creative
-}
-```
-
-**What you get**: A specific constraint + WHY it's relevant to your block + HOW to apply it + what might emerge.
-
-**Use when**: Creative block. Decision paralysis. You've been staring at the same problem too long.
-
----
-
-### 4. `serendipity_scan` — The Unknown Unknown Finder
-
-Find what you don't know you're looking for. Works even with zero prior context—mines your input for concepts, generates exploration probes, surfaces surprising connections.
-
-```typescript
-{
-  currentContext: "We're building AI tools for creative professionals",
-  noveltyThreshold: 0.8,    // 0 = safe, 1 = weird
-  scanType: "gap"           // bridge | gap | pattern | random
-}
-```
-
-**What you get**: A discovered concept + the associative chain that found it + why it matters + new threads to pull.
-
-**Use when**: Exploration mode. Research. You want to discover blind spots in your thinking.
-
----
-
-### 5. `meta_association` — The Chaos Weaver
-
-The amplifier. Takes outputs from the other tools and forces them to **collide**. If semantic_drift makes one wild leap, meta_association makes wild leaps *between* the wild leaps.
-
-```typescript
-{
-  priorOutputs: [/* results from other tools */],
-  chaosIntensity: 0.8,
-  contextAnchor: "my original problem"    // optional grounding
-}
-```
-
-**What you get**: Collision points between concepts + emergent meta-patterns + the weirdest justified connection + practical extraction from the chaos.
-
-**Use when**: You've run multiple tools and want to see what emerges from forcing them together. Maximum lateral force required.
-
----
-
-### 6. `provide_feedback` — The Learning Engine (NEW in v1.1)
-
-Help the MCP learn from your creative explorations. Rate the quality of tool outputs, report actual semantic distances, and flag what worked or didn't.
-
-```typescript
-{
-  toolName: "semantic_drift",
-  inputParams: { anchorConcept: "blockchain", driftMagnitude: 0.7, temperature: 0.8 },
-  qualityRating: 9,              // 0-10
-  actualDistance: 0.68,          // 0-1 (your assessment)
-  destinationConcept: "mycelium networks",
-  hintsQuality: "just_right",    // too_close | just_right | too_far | unhelpful
-  surpriseLevel: 8,              // 0-10
-  coherenceLevel: 9              // 0-10
-}
-```
-
-**What happens**: After 3+ feedback samples for a concept pattern, the system automatically applies learned optimal parameters. If blockchain works best at 70% drift, it'll use 70% even if you request 30%.
-
-**Use when**: After any tool execution where you want the system to learn from the result. The more feedback, the smarter it gets.
-
-**Resources available**:
-- `feedback://stats` — Overall feedback statistics
-- `feedback://recent` — Last 10 feedback items
-- `feedback://learned` — Learned parameters by concept pattern
-
----
-
-## 🎯 See It In Action
-
-### "Our checkout is too slow but we can't remove steps"
+For Docker:
 
 ```json
 {
-  "tool": "bisociative_synthesis",
-  "input": {
-    "matrixA": "e-commerce checkout optimization",
-    "matrixB": "emergency room triage"
+  "servers": {
+    "associative-dreaming": {
+      "command": "docker",
+      "args": ["run", "--rm", "-i", "mcp/associative-dreaming"]
+    }
   }
 }
 ```
 
-**Output**: ER triage doesn't make the process faster—it makes waiting *feel* purposeful by showing progress and priority. Maps to: progress indicators that show *why* each step matters, not just that it exists. The friction becomes value demonstration.
+Set `DISABLE_DREAM_LOGGING=true` to disable console output.
 
----
+## Complementary Usage
 
-### "We're a B2B SaaS in a crowded market"
-
-```json
-{
-  "tool": "serendipity_scan",
-  "input": {
-    "currentContext": "B2B project management tool competing with Monday, Asana, Notion",
-    "scanType": "gap",
-    "noveltyThreshold": 0.9
-  }
-}
-```
-
-**Output**: Discovers that all competitors optimize for the *manager's* view. Gap: tools that optimize for the IC's experience of being managed. The asymmetry is the opportunity.
-
----
-
-### "I've been staring at this architecture decision for 3 days"
-
-```json
-{
-  "tool": "oblique_constraint",
-  "input": {
-    "currentBlock": "Can't decide between microservices and monolith",
-    "constraintType": "inversion"
-  }
-}
-```
-
-**Output**: "What if the architecture was *designed* to be thrown away in 18 months?" Reveals: you're optimizing for a future you can't predict. The decision paralysis is about false permanence.
-
----
-
-## 🏗️ How It Actually Works
-
-### The Core Architecture
-
-This MCP server doesn't try to be creative itself. **Creativity happens in the LLM.** The server provides **scaffolding**—structured prompts that guide Claude's natural hyperdimensional pattern-matching toward productive lateral thinking.
+Use **both servers** together:
 
 ```
-User → Claude → MCP Server → [Generate Scaffold] → Claude → Creative Output
-                     ↓
-              [Track in Graph]
+Problem → Sequential Thinking (stuck) → Associative Dreaming (drift) → Sequential Thinking (structure) → Solution
 ```
 
-### What Each Tool Returns
+Sequential Thinking converges. Associative Dreaming diverges. You need both.
 
-Every tool returns a **Creative Scaffold** with three components:
-
-1. **LLM Prompt**: Structured task with constraints and required reasoning sections
-2. **Metadata**: Tool parameters and context for reference
-3. **Graph Update**: Concepts and relationships added to the exploration map
-
-Example scaffold structure:
-```
-═══════════════════════════════════════════════════════════════
-  SEMANTIC DRIFT - CREATIVE SCAFFOLD
-═══════════════════════════════════════════════════════════════
-
-[Task description and methodology]
-
-───────────────────────────────────────────────────────────────
-  YOUR TASK (Process this for genuine insight)
-───────────────────────────────────────────────────────────────
-
-[Specific creative task with:]
-- The anchor concept and drift parameters
-- Required response sections:
-  * destination_concept: Where you landed
-  * because_chain: Step-by-step reasoning
-  * reframe: What this reveals about the original concept
-  * concrete_application: How to use this insight
-
-[Constraints ensuring useful output, not just weird]
-```
-
-### The "Because Chain" Requirement
-
-Every connection must be **traceable**. No more "this is weird, therefore creative." Every leap requires:
-
-1. **The connection itself**
-2. **Why this connection exists** (step by step)
-3. **What it reveals** about the original problem
-4. **Concrete application** to user's context
-
-Weirdness in service of insight, not weirdness for performance.
-
----
-
-### The Concept Graph
-
-Under the hood, the server maintains a **relationship graph** that grows with each tool call:
-- **Nodes**: Concepts (anchors, destinations, bridges, discoveries)
-- **Edges**: Typed relationships (METAPHOR_FOR, CONTRASTS_WITH, SYNTHESIZED_FROM, etc.)
-- **Clusters**: Related concepts that form naturally
-- **Bridge Nodes**: Connect disparate areas of thinking
-- **Structural Holes**: Reveal unexplored territory
-
-This isn't just logging—it's a **map of your creative exploration** that can be queried and built upon across sessions.
-
----
-
-## 🔬 The Philosophy
-
-| What We're Told | What Actually Works |
-|:---|:---|
-| "Think step by step" | Sometimes the step you need is sideways |
-| "Be logical" | Logic finds what you're looking for; association finds what you're not |
-| "Stay focused" | Peripheral vision catches what direct gaze misses |
-| "Avoid tangents" | The tangent IS the insight |
-
-**Associative Dreaming** gives your AI permission to wander. Productively. With guardrails that ensure the wandering leads somewhere useful.
-
----
-
-## 🛠️ Development
+## Building
 
 ```bash
-# Clone and install
-git clone <repository-url>
-cd associative-dreaming-mcp-server
 npm install
-
-# Build
 npm run build
-
-# Run locally
-npm start
-
-# Watch mode for development
-npm run build:watch
 ```
 
-### Project Structure
-
-```
-src/
-├── index.ts              # MCP server entry point
-├── lib.ts                # Core server implementation
-├── config.ts             # Configuration management
-├── graph.ts              # Concept relationship graph
-├── schemas.ts            # Zod validation schemas
-├── services/             # Intelligence services (NEW in v1.1)
-│   ├── embedding-service.ts    # Vector embeddings (OpenAI + TF-IDF fallback)
-│   ├── feedback-service.ts     # LLM → MCP learning loop
-│   └── hint-service.ts         # Graph-based hint generation
-├── tools/                # The six creative engines
-│   ├── semantic-drift.ts
-│   ├── bisociative-synthesis.ts
-│   ├── oblique-constraint.ts
-│   ├── serendipity-scan.ts
-│   └── meta-association.ts
-├── prompts/              # Scaffold generation
-│   └── creative-scaffolds.ts
-└── utils/                # Helper utilities
-    ├── concept-extractor.ts    # Real NLP concept extraction
-    ├── transparency.ts         # Computation tracking
-    ├── logger.ts              # Structured logging
-    ├── concept.ts
-    ├── random.ts
-    └── errors.ts
-```
-
-### Environment Variables
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `OPENAI_API_KEY` | OpenAI API key for real semantic embeddings (recommended) | None (falls back to TF-IDF) |
-| `DISABLE_DREAM_LOGGING` | Set to `"true"` to suppress console output | `false` |
-
-**Note**: Without `OPENAI_API_KEY`, the system uses TF-IDF fallback embeddings. For best results, set your OpenAI key:
+Docker:
 
 ```bash
-export OPENAI_API_KEY="sk-..."
+docker build -t mcp/associative-dreaming .
 ```
 
----
+## License
 
-## 📊 System Status
-
-### ✅ Current Capabilities (v1.1 - MAJOR UPGRADE)
-- **Real Vector Embeddings**: True semantic distance using OpenAI embeddings (with TF-IDF fallback)
-- **LLM → MCP Feedback Loop**: System learns optimal parameters from your usage patterns
-- **Graph-Based Hints**: Dynamic hint generation from concept graph structure (replaces 200+ lines of hardcoded data)
-- **Parameter Learning**: After 3+ examples, automatically applies learned optimal settings
-- **Separation of Concerns**: MCP does computation (vectors, graphs, stats), LLM does creativity
-- Creative prompt scaffolding for 5 distinct thinking modes
-- Concept relationship graph with typed edges and clustering
-- Traceable reasoning chains ("because chains")
-- Persistent learning storage (`.feedback-store.json`)
-- Works seamlessly with Claude via MCP protocol
-
-### 🔥 What's New in v1.1
-
-**Real Computation, Not Fake**:
-- ✅ Semantic distance computed via cosine similarity on embeddings
-- ✅ Hints generated from actual graph neighbors and edge relationships
-- ✅ Bridge nodes discovered through betweenness centrality
-- ✅ Parameters learned from quality feedback across sessions
-
-**Adaptive Intelligence**:
-```typescript
-// You provide feedback once:
-provide_feedback({
-  toolName: "semantic_drift",
-  anchorConcept: "blockchain",
-  driftMagnitude: 0.7,
-  qualityRating: 9
-})
-
-// After 3 examples, the system learns:
-// "blockchain" works best at 70% drift, 80% temperature
-
-// Next time you ask for blockchain:
-semantic_drift({ anchorConcept: "blockchain", driftMagnitude: 0.3 })
-
-// System automatically applies learned optimal: 70% drift! 🎯
-```
-
-### 🔮 Planned Enhancements
-- **v1.2**: Concept map visualization (interactive graph explorer)
-- **v1.3**: Multi-turn conversation support with context accumulation
-- **v1.4**: Cross-domain bridge discovery using community detection
-- **v2.0**: Collaborative learning across users (opt-in)
-
-See [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md) for detailed roadmap.
-
----
-
-## 📚 References & Inspiration
-
-- **Arthur Koestler** — *The Act of Creation* (bisociation theory)
-- **Brian Eno** — *Oblique Strategies* (creative constraints)
-- **Stuart Kauffman** — *The Adjacent Possible* (innovation spaces)
-- **Deleuze & Guattari** — *A Thousand Plateaus* (rhizomatic thinking)
-- **Douglas Hofstadter** — *Fluid Concepts and Creative Analogies*
-
----
-
-## 📄 License
-
-MIT License - See [LICENSE](LICENSE) for details
-
----
-
-## 🤝 Contributing
-
-Contributions welcome! This is an experiment in harnessing AI's natural creative tendencies. If you have ideas for new creative engines, better scaffolding techniques, or ways to make lateral thinking more reliable, please open an issue or PR.
-
-**Areas of Interest:**
-- New creative constraints or thinking modes
-- Better prompt scaffolding techniques
-- Graph visualization and exploration
-- Multi-agent creative collaboration patterns
-
----
-
-<div align="center">
-
-### The best ideas don't come from thinking harder. They come from thinking *different*.
-
-**What unexpected connection will you find today?**
-
-[Report Bug](../../issues) • [Request Feature](../../issues) • [Contribute](CONTRIBUTING.md)
-
-*Built for the creatively impatient*
-
-</div>
+MIT
