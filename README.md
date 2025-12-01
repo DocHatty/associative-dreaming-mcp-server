@@ -12,6 +12,8 @@ LLMs naturally operate through hyperdimensional pattern-matching. They see conne
 
 This tool gives them **permission to stop suppressing it**.
 
+And when the journey concludes, the tool instructs the LLM to synthesize its discoveries with craft and care—to write with the full depth of its capability. Precise grammar, elegant prose, vivid language. The human reading the output deserves writing that matches the quality of the thinking.
+
 ---
 
 ## What This Actually Is (Brutal Honesty)
@@ -102,15 +104,15 @@ branching (explore paths)           collision (force insight)
 
   The Path:
 
-    🌀 code review
+    Code review
        ↓
-    🌀 confession booth
+    Confession booth
        ↓
-    🌀 ritual absolution
+    Ritual absolution
        ↓
-    🌀 permission to fail
+    Permission to fail
        ↓
-    💥 code review ⊗ permission to fail
+    💥 Code review × Permission to fail
 
   Collision Chain: review-reframe
   ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
