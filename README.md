@@ -193,6 +193,7 @@ The insight lives in the collision, not in either concept alone.
 | `isCollision` | boolean | Forcing a collision? |
 | `collidesWith` | string | What concept to crash into |
 | `collisionId` | string | Chain identifier for collision sequences |
+| `resetSession` | boolean | Set true to clear all state and start fresh |
 
 **Sensible defaults:**
 - Start with `chaosLevel: 0.5`
@@ -304,8 +305,8 @@ Use Associative Dreaming when:
 
 ## What This Is NOT
 
-- **Not a semantic network.** The server doesn't compute conceptual distances.
-- **Not a creativity engine.** The LLM does all creative work.
+- **Not an embedding-based semantic network.** The distance measurement uses surface-level heuristics (word overlap, character trigrams), not deep embeddings. It provides useful signal, not ground truth.
+- **Not a creativity engine.** The LLM does all creative work. The server measures and tracks.
 - **Not a solution generator.** It produces framings, not answers.
 - **Not a replacement for linear thinking.** You need Sequential Thinking (Yang) to converge on answers. This is the divergent complement.
 - **Not magic.** Most drifts won't produce insight. That's expected. You're exploring a space, not following a path.

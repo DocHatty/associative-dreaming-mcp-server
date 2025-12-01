@@ -19,7 +19,7 @@ import { AssociativeDreamingServer } from "./lib.js";
 
 const server = new McpServer({
   name: "associative-dreaming-server",
-  version: "2.0.0",
+  version: "2.1.0",
 });
 
 const dreamingServer = new AssociativeDreamingServer();
@@ -102,7 +102,35 @@ Return to: "code review" → now seen as "a ritual that grants permission, not a
 The insight at the end wasn't in any single concept. It emerged from the wandering.
 
 THE VALUE IS IN WHERE YOU LAND AND WHAT COLLIDES.
-The path is the evidence. The explanation comes after, if ever.`,
+The path is the evidence. The explanation comes after, if ever.
+
+MEASUREMENT & FEEDBACK:
+This tool provides real-time feedback on your exploration:
+
+1. SEMANTIC DISTANCE: After each drift, you'll see measured distance (0-1) between concepts.
+   This is computed from word overlap + character trigrams. It's not embeddings, but it works.
+
+2. DRIFT CALIBRATION: Compares your chaosLevel intent with actual measured distance.
+   - 🐢 Conservative: You're drifting closer than intended (self-censoring?)
+   - ✓ On-target: Actual drift matches your intent
+   - 🔥 Wild: You're drifting further than intended (good for high chaos!)
+
+3. COLLISION TENSION: When you force a collision, you'll see tension score (0-1).
+   - LOW (<0.4): Concepts too similar — collision may fizzle
+   - MEDIUM (0.4-0.7): Reasonable tension
+   - HIGH (>0.7): High distance = potentially productive collision
+
+4. STUCK DETECTION: If your last 3 concepts are too similar (avg distance < 0.3),
+   you'll get a warning. Consider: higher chaosLevel or force a collision.
+
+5. SESSION ANALYTICS: Every 5 drifts (and at the end), you'll see:
+   - Total drifts / unique concepts
+   - Average drift distance
+   - Times stuck
+   - Calibration summary (🐢/✓/🔥 counts)
+
+USE THIS FEEDBACK to calibrate your exploration. If you're consistently 🐢, you're
+playing it safe. If the path shows LOW collision tension, pick more distant concepts.`,
     inputSchema: {
       concept: z
         .string()
@@ -161,6 +189,10 @@ The path is the evidence. The explanation comes after, if ever.`,
         .string()
         .optional()
         .describe("Identifier for this collision chain (like branchId)"),
+      resetSession: z
+        .boolean()
+        .optional()
+        .describe("Set to true to reset/clear all state and start a fresh exploration session"),
     },
     outputSchema: {
       driftDepth: z.number(),

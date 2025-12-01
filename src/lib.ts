@@ -25,16 +25,17 @@ export interface DreamData {
   isCollision?: boolean;
   collidesWith?: string;
   collisionId?: string;
+  resetSession?: boolean;
 }
 
-interface DriftMetrics {
+export interface DriftMetrics {
   semanticDistance: number;
   targetChaos: number;
   calibration: "conservative" | "on-target" | "wild";
   isStuck: boolean;
 }
 
-interface SessionAnalytics {
+export interface SessionAnalytics {
   totalDrifts: number;
   avgSemanticDistance: number;
   maxSemanticDistance: number;
@@ -51,7 +52,7 @@ export class AssociativeDreamingServer {
   private collisions: Record<string, DreamData[]> = {};
   private disableDreamLogging: boolean;
   
-  // New: metrics tracking
+  // Metrics tracking
   private driftDistances: number[] = [];
   private collisionTensions: number[] = [];
   private calibrationHistory: string[] = [];
@@ -60,6 +61,18 @@ export class AssociativeDreamingServer {
   constructor() {
     this.disableDreamLogging =
       (process.env.DISABLE_DREAM_LOGGING || "").toLowerCase() === "true";
+  }
+
+  /**
+   * Reset the session state. Call this to start a fresh exploration.
+   */
+  public reset(): void {
+    this.dreamHistory = [];
+    this.collisions = {};
+    this.driftDistances = [];
+    this.collisionTensions = [];
+    this.calibrationHistory = [];
+    this.stuckCount = 0;
   }
 
   /**
@@ -75,11 +88,14 @@ export class AssociativeDreamingServer {
     const c1 = concept1.toLowerCase().trim();
     const c2 = concept2.toLowerCase().trim();
     
+    // Handle edge cases
     if (c1 === c2) return 0;
+    if (c1.length === 0 || c2.length === 0) return 1;
     
     // 1. Word-level Jaccard distance
-    const words1 = new Set(c1.split(/\s+/).filter(w => w.length > 2));
-    const words2 = new Set(c2.split(/\s+/).filter(w => w.length > 2));
+    // Include all words (not just >2 chars) to handle short concepts
+    const words1 = new Set(c1.split(/\s+/).filter(w => w.length > 0));
+    const words2 = new Set(c2.split(/\s+/).filter(w => w.length > 0));
     const wordIntersection = new Set([...words1].filter(x => words2.has(x)));
     const wordUnion = new Set([...words1, ...words2]);
     const wordJaccard = wordUnion.size > 0 
@@ -87,15 +103,19 @@ export class AssociativeDreamingServer {
       : 1;
     
     // 2. Character trigram distance (captures partial word overlap)
+    // Falls back gracefully for very short strings
     const trigrams = (s: string): Set<string> => {
       const t = new Set<string>();
-      for (let i = 0; i <= s.length - 3; i++) {
-        t.add(s.substring(i, i + 3));
+      const normalized = s.replace(/\s+/g, ' ');
+      // For very short strings, use bigrams instead
+      const n = normalized.length < 5 ? 2 : 3;
+      for (let i = 0; i <= normalized.length - n; i++) {
+        t.add(normalized.substring(i, i + n));
       }
       return t;
     };
-    const tri1 = trigrams(c1.replace(/\s+/g, ' '));
-    const tri2 = trigrams(c2.replace(/\s+/g, ' '));
+    const tri1 = trigrams(c1);
+    const tri2 = trigrams(c2);
     const triIntersection = new Set([...tri1].filter(x => tri2.has(x)));
     const triUnion = new Set([...tri1, ...tri2]);
     const trigramJaccard = triUnion.size > 0
@@ -228,6 +248,11 @@ export class AssociativeDreamingServer {
     isError?: boolean;
   } {
     try {
+      // Handle session reset
+      if (input.resetSession) {
+        this.reset();
+      }
+
       // Adjust maxDrift if driftDepth exceeds it
       if (input.driftDepth > input.maxDrift) {
         input.maxDrift = input.driftDepth;
