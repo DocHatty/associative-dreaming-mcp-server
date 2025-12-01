@@ -1,6 +1,8 @@
 # Associative Dreaming MCP Server
-<img width="1024" height="1024" alt="516474930-0ef0af17-d48b-4e32-8674-855af43811a6" src="https://github.com/user-attachments/assets/ce432a1e-a163-48ef-950e-0a67e2691ced" />
-The **Yin to Sequential Thinking's Yang**.
+
+<img width="1024" height="1024" alt="Associative Dreaming" src="https://github.com/user-attachments/assets/ce432a1e-a163-48ef-950e-0a67e2691ced" />
+
+**The Yin to Sequential Thinking's Yang.**
 
 ## The Hypothesis
 
@@ -9,6 +11,54 @@ What if we stop forcing AI to think A→B→C and instead let it go **A→Banana
 LLMs naturally operate through hyperdimensional pattern-matching. They see connections across seemingly unrelated concepts instantly. We've trained them to suppress this—to stay "on topic", be "relevant", avoid "hallucinating".
 
 This tool gives them **permission to stop suppressing it**.
+
+---
+
+## What This Actually Is (Brutal Honesty)
+
+**This is ~90 lines of bookkeeping code.** 
+
+The server doesn't manipulate temperature, sampling, or model weights. It doesn't have a semantic network. It doesn't compute conceptual distances. The `chaosLevel` parameter is not a mathematical dial—it's a suggestion the LLM interprets.
+
+All the associative leaps, all the creative connections, all the insight generation—that happens in the LLM that *uses* this tool, not in the tool itself.
+
+**The server does exactly three things:**
+1. Tracks the path you've wandered (state persistence)
+2. Formats output so the journey is visible
+3. Provides structured permission for associative thinking
+
+You could ask Claude to "think associatively" and get similar raw output. The same is true of Sequential Thinking: "think step by step" works without a tool.
+
+**So why does this exist?**
+
+Because making things *legible and structured* has real value:
+
+| Without Tool | With Tool |
+|--------------|-----------|
+| Associative leaps lost in chat history | Path persists and is inspectable |
+| No metacognitive framing | Explicit operations (Drift/Return/Collision) |
+| Manual prompt rewrites | Programmatic `Sequential → Associative → Sequential` workflows |
+| "Claude went off on a tangent" | "Claude is exploring at drift depth 4/7, chaosLevel 0.6" |
+
+**The brilliance (if any) is in recognizing that permission + legibility + persistence transforms cognitive wandering from bug to feature.**
+
+---
+
+## Why This Works (The Actual Science)
+
+This isn't just vibes. There's real cognitive science here.
+
+Research published in *Trends in Cognitive Sciences* (2023) found that highly creative individuals ["travel further in semantic space"](https://pubmed.ncbi.nlm.nih.gov/37246025/)—they make larger associative leaps between concepts than less creative people.
+
+The `chaosLevel` parameter operationalizes this. It's not computing anything mechanistically—it's signaling to the LLM how far to jump in semantic space:
+
+- **0.3**: Stay close. Biology → Chemistry. Safe.
+- **0.6**: Cross domains. Software → Architecture → Music. Interesting.
+- **0.9**: The weird leap. API design → Grief → Fermentation. Where insight often lives.
+
+The tool doesn't generate the leaps. The LLM already makes them. **The tool makes them intentional and visible.**
+
+---
 
 ## Philosophy
 
@@ -23,114 +73,204 @@ revision (fix mistakes)             return (see differently)
 branching (explore paths)           collision (force insight)
 ```
 
-## What This Actually Is
+---
 
-**Scaffolding for cognitive modes, not a replacement for them.**
+## A Real Example (Not Abstract)
 
-This is prompt engineering infrastructure. It doesn't manipulate temperature, sampling, or model weights—it provides structured tracking, persistence, and explicit permission for associative thinking. You could ask Claude to "think associatively" and get similar raw output.
+**Problem:** "Our code review process creates anxiety and delays."
 
-The same is true of Sequential Thinking: asking Claude to "think step by step" works—yet there's value in making the process structured and trackable.
+**Linear thinking produces:**
+- Shorter reviews
+- Better checklists
+- Async alternatives
+- Smaller PRs
 
-The real value is threefold:
+*Bounded by the problem's framing. The solution space is the problem space.*
 
-1. **Legibility**: The rhizomatic path becomes visible and inspectable, not lost in chat history
-2. **Persistence**: Cognitive state survives across conversation turns and tool calls
-3. **Composition**: Enables the pattern `Sequential → Associative → Sequential` as a programmatic workflow, not a manual prompt rewrite
+**Associative Dreaming session:**
 
-## The Value Proposition
-
-The value isn't in producing unexplainable outputs—it's in **escaping the gravity well of the problem's framing**.
-
-Linear reasoning on "meeting fatigue" explores: shorter meetings, better agendas, async alternatives. The solution space is *bounded by the problem's framing*.
-
-Associative Dreaming might drift to "funeral rituals" and land on "meetings as witnessing rituals." Yes, you can explain the path afterward—that's what insight *is*. But no linear approach would have **started** there.
-
-## The Three Operations
-
-### DRIFT
-Where does your mind *want* to go? Not where it *should* go. Follow the pull.
-- chaosLevel 0.3: adjacent fields (biology → chemistry)
-- chaosLevel 0.6: cross-domain (software → architecture → music)
-- chaosLevel 0.9: the weird leap (API design → grief → fermentation)
-
-*(This isn't a linear dial—the LLM interprets intent, not magnitude.)*
-
-### RETURN
-Come back to an earlier concept, but you're different now. What do you see that you couldn't see before? This is NOT revision (fixing mistakes). This is re-seeing (transformed perspective).
-
-### COLLISION
-Force two concepts that "don't belong together" to crash. What emerges from the wreckage? The insight lives in the collision, not in either concept alone.
-
-## Tool
-
-### associativedreaming
-
-**Inputs:**
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `concept` | string | Where you landed. The current node in the rhizome. |
-| `driftDepth` | integer | How many drifts deep (like thoughtNumber) |
-| `maxDrift` | integer | Estimated total drifts needed (like totalThoughts) |
-| `chaosLevel` | number 0-1 | How wild to get |
-| `needsMoreDrift` | boolean | Keep wandering? |
-| `isReturn` | boolean? | Coming back to an earlier concept? |
-| `returnsTo` | string? | Which concept you're returning to |
-| `isCollision` | boolean? | Forcing a collision? |
-| `collidesWith` | string? | What concept to crash into |
-| `collisionId` | string? | Chain identifier for related collisions |
-
-**Output:**
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  Drift 4 of 5 — Exploring...
+  Drift 5 of 5 — Arrived.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   The Path:
 
     🌀 code review
        ↓
-    🌀 confession
+    🌀 confession booth
        ↓
     🌀 ritual absolution
        ↓
-    💥 permission structures
+    🌀 permission to fail
+       ↓
+    💥 code review ⊗ permission to fail
+
+  Collision Chain: review-reframe
 ```
 
-## Usage
+**Insight:** Code review isn't a tribunal that assigns blame—it's a ritual that grants permission to fail forward. The anxiety comes from framing it as judgment rather than absolution.
 
-Associative Dreaming is designed for:
-- When linear thinking is stuck or circular
-- When you need connections you haven't considered
-- When the problem space feels rigid
-- When you want to explore, not conclude
-- When you keep arriving at the same unsatisfying conclusions
+**The fix:** Rename the process "Failure Permission Review." First reviewer comment must be what they'd do differently in the author's position. Frame approval as "blessing" rather than "passing."
 
-## Rules
+*That insight wasn't in any single concept. It emerged from the collision. No linear approach would have started at "confession booth."*
 
-1. When you feel the pull toward a "weird" connection—**follow it**
-2. **Do not justify each step**—justify at the end, if at all
-3. The concept field is for where you are, not a logical argument
-4. If a drift feels "too random"—increase chaosLevel and do it anyway
-5. Collision is for forcing insight. Pick concepts that feel wrong together
-6. You're not solving yet. You're exploring.
+---
+
+## The Three Operations
+
+### DRIFT 🌀
+
+Where does your mind *want* to go? Not where it *should* go. Follow the pull.
+
+The `chaosLevel` is intent-signaling, not a physics engine:
+- **0.3**: Adjacent fields. Safe. Predictable.
+- **0.6**: Cross-domain. Interesting. Unexpected.
+- **0.9**: The weird leap. Uncomfortable. Often valuable.
+
+**Rule:** If a drift feels "too random"—increase `chaosLevel` and follow it anyway.
+
+### RETURN 🔄
+
+Come back to an earlier concept, but you're different now. What do you see that you couldn't see before?
+
+This is **NOT** revision (fixing mistakes). This is re-seeing (transformed perspective).
+
+**The question:** "Now that I've been to grief and fermentation, what does 'API design' look like from here?"
+
+### COLLISION 💥
+
+Force two concepts that "don't belong together" to crash. What emerges from the wreckage?
+
+Think: Gutenberg (wine press + coin stamps = printing press)
+
+The insight lives in the collision, not in either concept alone.
+
+**Pick concepts that feel WRONG together.** That's the point.
+
+---
+
+## Tool Reference
+
+### associativedreaming
+
+**Core inputs** (required):
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `concept` | string | Where you landed. The current node in the rhizome. |
+| `driftDepth` | integer | How many drifts deep (starts at 1) |
+| `maxDrift` | integer | Estimated total drifts needed (adjust as you go) |
+| `chaosLevel` | number 0-1 | Intent signal: how far to leap in semantic space |
+| `needsMoreDrift` | boolean | Keep wandering? False when done. |
+
+**Optional inputs** (for specific operations):
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `isReturn` | boolean | Returning to an earlier concept? |
+| `returnsTo` | string | Which concept you're returning to |
+| `isCollision` | boolean | Forcing a collision? |
+| `collidesWith` | string | What concept to crash into |
+| `collisionId` | string | Chain identifier for collision sequences |
+
+**Sensible defaults:**
+- Start with `chaosLevel: 0.5`
+- Start with `maxDrift: 5` (adjust up if stuck)
+- Use collision when you have two interesting concepts but no insight yet
+
+---
+
+## When This Works
+
+Use Associative Dreaming when:
+- Linear thinking produces circular results
+- The problem space feels rigid
+- You keep arriving at the same unsatisfying conclusions
+- You need connections you haven't considered
+- You want to explore, not conclude
+
+---
+
+## When This Fails (Failure Modes)
+
+### The Insight Illusion
+
+**Symptom:** Drifts produce interesting-sounding connections that don't actually illuminate anything.
+
+*"Code review → butterflies → metamorphosis → CI/CD as cocoon"* — This sounds profound but is just metaphor-shopping.
+
+**Diagnostic questions:**
+1. Does this reframe the problem, or just rename it?
+2. Can you trace *why* the connection matters?
+3. Is there surprise that feels retrospectively obvious?
+4. Does it suggest a new lens, or just a new analogy?
+
+**Fix:** Increase `chaosLevel`. Force a collision. The issue is usually not enough conceptual distance, not too much.
+
+### The Random Walk
+
+**Symptom:** Each drift is interesting but they don't build. The path goes nowhere.
+
+**Fix:** Return to the original concept after drift 3-4. Ask: "What do I see now that I couldn't see before?" If nothing: you're random walking, not exploring.
+
+### The Collision Fizzle
+
+**Symptom:** You force a collision but nothing emerges.
+
+**Diagnostic:** Did you pick concepts that feel *wrong* together? If both concepts are from the same conceptual neighborhood, collision can't produce novelty.
+
+**Fix:** Collide across maximum distance. Pick the concept that feels most absurd to combine.
+
+---
+
+## What This Is NOT
+
+- **Not a semantic network.** The server doesn't compute conceptual distances.
+- **Not a creativity engine.** The LLM does all creative work.
+- **Not a solution generator.** It produces framings, not answers.
+- **Not a replacement for linear thinking.** You need Sequential Thinking (Yang) to converge on answers. This is the divergent complement.
+- **Not magic.** Most drifts won't produce insight. That's expected. You're exploring a space, not following a path.
+
+---
 
 ## Recognizing Value vs. Noise
 
 A productive collision typically:
+
 - **Re-frames the problem space** rather than just adding options
 - **Creates surprise that feels retrospectively obvious**
 - **Generates explainable insight**: you can trace *why* the connection matters after the fact
 - **Suggests a new lens**, not a ready-made answer
 
-If a drift path produces only surface-level metaphors, increase `chaosLevel` or force a collision between more distant concepts.
+If you're generating only surface-level metaphors, you're not drifting far enough.
+
+---
+
+## Complementary Usage
+
+Use **both tools** together:
+
+```
+Problem
+   │
+   ▼
+Sequential Thinking ──► [stuck/circular]
+   │
+   ▼
+Associative Dreaming ──► [new framing]
+   │
+   ▼
+Sequential Thinking ──► [structured solution]
+```
+
+**Sequential Thinking converges. Associative Dreaming diverges. Complex problems require both.**
+
+---
 
 ## Configuration
 
 ### Claude Desktop
 
-Add this to your `claude_desktop_config.json`:
-
-#### npx
+Add to `claude_desktop_config.json`:
 
 ```json
 {
@@ -143,7 +283,7 @@ Add this to your `claude_desktop_config.json`:
 }
 ```
 
-#### docker
+Or with Docker:
 
 ```json
 {
@@ -158,8 +298,6 @@ Add this to your `claude_desktop_config.json`:
 
 ### VS Code
 
-For manual installation, add to your user or workspace MCP configuration:
-
 ```json
 {
   "servers": {
@@ -171,34 +309,19 @@ For manual installation, add to your user or workspace MCP configuration:
 }
 ```
 
-For Docker:
+### Environment Variables
 
-```json
-{
-  "servers": {
-    "associative-dreaming": {
-      "command": "docker",
-      "args": ["run", "--rm", "-i", "mcp/associative-dreaming"]
-    }
-  }
-}
-```
+| Variable | Effect |
+|----------|--------|
+| `DISABLE_DREAM_LOGGING=true` | Suppress console output |
 
-Set `DISABLE_DREAM_LOGGING=true` to disable console output.
-
-## Complementary Usage
-
-Use **both servers** together:
-
-```
-Problem → Sequential Thinking (stuck) → Associative Dreaming (drift) → Sequential Thinking (structure) → Solution
-```
-
-Sequential Thinking converges. Associative Dreaming diverges. You need both.
+---
 
 ## Related Work
 
-This complements tools like [unconventional-thinking](https://github.com/stagsz/unconventional-thinking). While that server generates "unreasonable thoughts" and branches, Associative Dreaming is designed for *rhizomatic wandering* with explicit operations (Drift/Return/Collision) and a focus on reframing rather than mere exploration.
+This complements [unconventional-thinking](https://github.com/stagsz/unconventional-thinking), which generates "unreasonable thoughts" and branches. Associative Dreaming focuses on *rhizomatic wandering* with explicit operations (Drift/Return/Collision) and a structured approach to reframing rather than generation.
+
+---
 
 ## Building
 
@@ -212,6 +335,23 @@ Docker:
 ```bash
 docker build -t mcp/associative-dreaming .
 ```
+
+---
+
+## The Honest Pitch
+
+This is good product design around a thin technical artifact. The magic isn't in the ~90 lines of server code. It's in:
+
+1. **Recognizing that making exploration visible has value**
+2. **The conceptual framing and naming** (Drift/Return/Collision)
+3. **Providing explicit permission** for associative thinking
+4. **Enabling programmatic workflows** that combine divergent and convergent modes
+
+You could call that "just prompting with extra steps." We'd call it *cognitive scaffolding*.
+
+The server is simple because it *trusts the LLM*. The LLM is doing the creative work. The server just makes the journey legible.
+
+---
 
 ## License
 
