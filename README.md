@@ -39,6 +39,8 @@ Where does your mind *want* to go? Not where it *should* go. Follow the pull.
 - chaosLevel 0.6: cross-domain (software → architecture → music)
 - chaosLevel 0.9: the weird leap (API design → grief → fermentation)
 
+*(This isn't a linear dial—the LLM interprets intent, not magnitude.)*
+
 ### RETURN
 Come back to an earlier concept, but you're different now. What do you see that you couldn't see before? This is NOT revision (fixing mistakes). This is re-seeing (transformed perspective).
 
