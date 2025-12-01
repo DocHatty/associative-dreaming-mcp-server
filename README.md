@@ -1,5 +1,5 @@
 # Associative Dreaming MCP Server
-
+<img width="1024" height="1024" alt="516474930-0ef0af17-d48b-4e32-8674-855af43811a6" src="https://github.com/user-attachments/assets/ce432a1e-a163-48ef-950e-0a67e2691ced" />
 The **Yin to Sequential Thinking's Yang**.
 
 ## The Hypothesis
