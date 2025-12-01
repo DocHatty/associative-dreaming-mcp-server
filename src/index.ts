@@ -169,6 +169,26 @@ The path is the evidence. The explanation comes after, if ever.`,
       collisionChains: z.array(z.string()),
       dreamHistoryLength: z.number(),
       thePath: z.array(z.string()),
+      // Drift metrics
+      metrics: z.object({
+        semanticDistance: z.number(),
+        targetChaos: z.number(),
+        calibration: z.enum(["conservative", "on-target", "wild"]),
+        isStuck: z.boolean(),
+      }).nullable(),
+      collisionTension: z.number().nullable(),
+      // Session analytics
+      analytics: z.object({
+        totalDrifts: z.number(),
+        avgSemanticDistance: z.number(),
+        maxSemanticDistance: z.number(),
+        minSemanticDistance: z.number(),
+        collisionTensions: z.array(z.number()),
+        avgCollisionTension: z.number(),
+        uniqueConcepts: z.number(),
+        stuckCount: z.number(),
+        calibrationHistory: z.array(z.string()),
+      }),
     },
   },
   async (args) => {

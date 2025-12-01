@@ -16,16 +16,19 @@ This tool gives them **permission to stop suppressing it**.
 
 ## What This Actually Is (Brutal Honesty)
 
-**This is ~90 lines of bookkeeping code.** 
+**This is ~200 lines of bookkeeping code with actual measurement.**
 
-The server doesn't manipulate temperature, sampling, or model weights. It doesn't have a semantic network. It doesn't compute conceptual distances. The `chaosLevel` parameter is not a mathematical dial—it's a suggestion the LLM interprets.
+The server doesn't manipulate temperature, sampling, or model weights. All the associative leaps, all the creative connections, all the insight generation—that happens in the LLM that *uses* this tool, not in the tool itself.
 
-All the associative leaps, all the creative connections, all the insight generation—that happens in the LLM that *uses* this tool, not in the tool itself.
+**But unlike pure prompt scaffolding, this server actually measures things:**
 
-**The server does exactly three things:**
-1. Tracks the path you've wandered (state persistence)
-2. Formats output so the journey is visible
-3. Provides structured permission for associative thinking
+1. **Semantic distance** between consecutive concepts (word overlap + character trigrams)
+2. **Collision tension** between forced-together concepts
+3. **Drift calibration** — comparing intended chaosLevel with measured distance
+4. **Stuck detection** — alerting when the path circles in one semantic neighborhood
+5. **Session analytics** — aggregate metrics on exploration quality
+
+The `chaosLevel` parameter is still intent-signaling, not a physics engine. But now **the server tells you whether your actual drift matched your intent.**
 
 You could ask Claude to "think associatively" and get similar raw output. The same is true of Sequential Thinking: "think step by step" works without a tool.
 
@@ -38,9 +41,12 @@ Because making things *legible and structured* has real value:
 | Associative leaps lost in chat history | Path persists and is inspectable |
 | No metacognitive framing | Explicit operations (Drift/Return/Collision) |
 | Manual prompt rewrites | Programmatic `Sequential → Associative → Sequential` workflows |
-| "Claude went off on a tangent" | "Claude is exploring at drift depth 4/7, chaosLevel 0.6" |
+| "Claude went off on a tangent" | "Claude is exploring at drift depth 4/7, semantic distance 0.73" |
+| No feedback on drift quality | Real-time calibration: "target 0.9, actual 0.45 — drifting conservatively" |
+| Can't tell if stuck | Automatic stuck detection with warnings |
+| Collision quality is vibes | Collision tension scores: "0.82 — HIGH ⚡" |
 
-**The brilliance (if any) is in recognizing that permission + legibility + persistence transforms cognitive wandering from bug to feature.**
+**The value is in measurement + legibility + persistence. The server provides actual feedback, not just formatting.**
 
 ---
 
@@ -107,6 +113,22 @@ branching (explore paths)           collision (force insight)
     💥 code review ⊗ permission to fail
 
   Collision Chain: review-reframe
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  📊 Drift Metrics:
+     Target chaos:      0.60
+     Measured distance: 0.78 [████████░░]
+     Calibration:       🔥 drifting further than intended
+
+  💥 Collision Tension: 0.82 [████████░░] HIGH ⚡
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  📈 Session Analytics:
+     Total drifts:        5
+     Unique concepts:     5
+     Avg drift distance:  0.71
+     Distance range:      0.58 — 0.82
+     Times stuck:         0
+     Avg collision tension: 0.82
+     Calibration: 🐢0 ✓1 🔥4
 ```
 
 **Insight:** Code review isn't a tribunal that assigns blame—it's a ritual that grants permission to fail forward. The anxiety comes from framing it as judgment rather than absolution.
@@ -176,6 +198,64 @@ The insight lives in the collision, not in either concept alone.
 - Start with `chaosLevel: 0.5`
 - Start with `maxDrift: 5` (adjust up if stuck)
 - Use collision when you have two interesting concepts but no insight yet
+
+---
+
+## Measurement System (What Makes This Different)
+
+Unlike pure prompt scaffolding, this server provides **actual measurement and feedback**:
+
+### Semantic Distance
+
+Computed using a combination of:
+- Word-level Jaccard distance (50%)
+- Character trigram distance (35%)
+- Length ratio penalty (15%)
+
+Returns 0–1 where 0 = identical concepts, 1 = maximally distant.
+
+*This isn't as sophisticated as embedding-based distance, but it's zero-dependency, runs locally, and provides meaningful signal.*
+
+### Drift Calibration
+
+Compares your intended `chaosLevel` with the measured semantic distance:
+
+| Symbol | Label | Meaning |
+|--------|-------|----------|
+| 🐢 | Conservative | Actual drift < target − 0.25 |
+| ✓ | On-target | Actual drift ≈ target |
+| 🔥 | Wild | Actual drift > target + 0.25 |
+
+If you're consistently 🐢, you're censoring yourself. If you're consistently 🔥, your concepts are further apart than you think.
+
+### Collision Tension
+
+Same distance metric applied to collision pairs:
+
+| Tension | Label | Meaning |
+|---------|-------|----------|
+| < 0.4 | LOW ⚠️ | Concepts too similar for productive collision |
+| 0.4–0.7 | MEDIUM | Reasonable tension |
+| > 0.7 | HIGH ⚡ | High conceptual distance = potentially productive |
+
+### Stuck Detection
+
+Examines the last 3 concepts. If average inter-concept distance < 0.3, triggers:
+
+```
+⚠️  PATH APPEARS STUCK — recent concepts too similar
+    Consider: higher chaosLevel or force a collision
+```
+
+### Session Analytics
+
+Reported every 5 drifts and at session end:
+
+- Total drifts / unique concepts (reveals repetition)
+- Avg/min/max semantic distance (exploration breadth)
+- Times stuck (path quality)
+- Calibration history summary (🐢/✓/🔥 counts)
+- Average collision tension
 
 ---
 
@@ -340,16 +420,21 @@ docker build -t mcp/associative-dreaming .
 
 ## The Honest Pitch
 
-This is good product design around a thin technical artifact. The magic isn't in the ~90 lines of server code. It's in:
+This started as good product design around a thin technical artifact. Then we added actual measurement.
 
-1. **Recognizing that making exploration visible has value**
-2. **The conceptual framing and naming** (Drift/Return/Collision)
-3. **Providing explicit permission** for associative thinking
-4. **Enabling programmatic workflows** that combine divergent and convergent modes
+The magic is now in:
 
-You could call that "just prompting with extra steps." We'd call it *cognitive scaffolding*.
+1. **Semantic distance measurement** — turns `chaosLevel` from theater into feedback
+2. **Drift calibration** — tells you when your intent doesn't match your execution
+3. **Collision tension scoring** — distinguishes productive collisions from noise
+4. **Stuck detection** — catches unproductive circling before you waste time
+5. **Session analytics** — provides empirical data on exploration quality
 
-The server is simple because it *trusts the LLM*. The LLM is doing the creative work. The server just makes the journey legible.
+The LLM still does all the creative work. But now the server **measures and reports** on the quality of that work.
+
+Is it still "prompting with extra steps"? Yes. But it's prompting with *measurement*, *feedback*, and *calibration*.
+
+That's the difference between a suggestion and a closed-loop system.
 
 ---
 
