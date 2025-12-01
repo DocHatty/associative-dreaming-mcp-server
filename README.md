@@ -23,6 +23,20 @@ revision (fix mistakes)             return (see differently)
 branching (explore paths)           collision (force insight)
 ```
 
+## What This Actually Is
+
+**Scaffolding for cognitive modes, not a replacement for them.**
+
+This is prompt engineering infrastructure. It doesn't manipulate temperature, sampling, or model weights—it provides structured tracking, persistence, and *explicit permission* for associative thinking. You could ask Claude to "think associatively" and get similar raw output.
+
+The same is true of Sequential Thinking: asking Claude to "think step by step" works—yet there's value in making the process structured and trackable.
+
+The real value is threefold:
+
+1. **Legibility**: The rhizomatic path becomes visible and inspectable, not lost in chat history
+2. **Persistence**: Cognitive state survives across conversation turns and tool calls
+3. **Composition**: Enables the pattern `Sequential → Associative → Sequential` as a programmatic workflow, not a manual prompt rewrite
+
 ## The Value Proposition
 
 The value isn't in producing unexplainable outputs—it's in **escaping the gravity well of the problem's framing**.
@@ -100,6 +114,16 @@ Associative Dreaming is designed for:
 5. Collision is for forcing insight. Pick concepts that feel wrong together
 6. You're not solving yet. You're exploring.
 
+## Recognizing Value vs. Noise
+
+A productive collision typically:
+- **Re-frames the problem space** rather than just adding options
+- **Creates surprise that feels retrospectively obvious**
+- **Generates explainable insight**: you can trace *why* the connection matters after the fact
+- **Suggests a new lens**, not a ready-made answer
+
+If a drift path produces only surface-level metaphors, increase `chaosLevel` or force a collision between more distant concepts.
+
 ## Configuration
 
 ### Claude Desktop
@@ -171,6 +195,10 @@ Problem → Sequential Thinking (stuck) → Associative Dreaming (drift) → Seq
 ```
 
 Sequential Thinking converges. Associative Dreaming diverges. You need both.
+
+## Related Work
+
+This complements tools like [unconventional-thinking](https://github.com/stagsz/unconventional-thinking). While that server generates "unreasonable thoughts" and branches, Associative Dreaming is designed for *rhizomatic wandering* with explicit operations (Drift/Return/Collision) and a focus on reframing rather than mere exploration.
 
 ## Building
 
