@@ -6,9 +6,9 @@ The **Yin to Sequential Thinking's Yang**.
 
 What if we stop forcing AI to think A→B→C and instead let it go **A→Banana→Your ex's apartment→Ancient Rome→Answer**?
 
-LLMs naturally operate through hyperdimensional pattern-matching. They see connections across seemingly unrelated concepts instantly. We've trained them to suppress this—to stay "on topic", be "relevant", avoid "hallucinating".
+LLMs operate through pattern-matching across vast semantic spaces. They see connections across seemingly unrelated concepts. But instruction-tuning and safety alignment have biased them away from this—toward staying "on topic", being "relevant", avoiding "hallucinating".
 
-This tool gives them **permission to stop suppressing it**.
+This tool redirects toward exploration—the guardrails remain, the direction changes.
 
 ## Philosophy
 
@@ -25,17 +25,15 @@ branching (explore paths)           collision (force insight)
 
 ## What This Actually Is
 
-**Scaffolding for cognitive modes, not a replacement for them.**
+This is **prompt engineering infrastructure**, not magic. The server doesn't manipulate temperature or sampling—it provides structured tracking and explicit permission for associative thinking. The same is true of Sequential Thinking: both are scaffolding that makes a thinking style *legible* and *persistent* across conversation turns.
 
-This is prompt engineering infrastructure. It doesn't manipulate temperature, sampling, or model weights—it provides structured tracking, persistence, and *explicit permission* for associative thinking. You could ask Claude to "think associatively" and get similar raw output.
+Could you just ask Claude to "think associatively"? Yes. Could you ask it to "think step by step" instead of using Sequential Thinking? Also yes. The value is threefold:
 
-The same is true of Sequential Thinking: asking Claude to "think step by step" works—yet there's value in making the process structured and trackable.
-
-The real value is threefold:
-
-1. **Legibility**: The rhizomatic path becomes visible and inspectable, not lost in chat history
+1. **Legibility**: The associative path becomes visible and inspectable, not lost in chat history
 2. **Persistence**: Cognitive state survives across conversation turns and tool calls
-3. **Composition**: Enables the pattern `Sequential → Associative → Sequential` as a programmatic workflow, not a manual prompt rewrite
+3. **Composition**: Enables `Sequential → Associative → Sequential` as a programmatic workflow
+
+This increases your odds of **systematic creative accidents**—structured exploration where the wins are usable and the losses are logged.
 
 ## The Value Proposition
 
@@ -49,11 +47,11 @@ Associative Dreaming might drift to "funeral rituals" and land on "meetings as w
 
 ### DRIFT
 Where does your mind *want* to go? Not where it *should* go. Follow the pull.
-- chaosLevel 0.3: adjacent fields (biology → chemistry)
-- chaosLevel 0.6: cross-domain (software → architecture → music)
-- chaosLevel 0.9: the weird leap (API design → grief → fermentation)
+- **adjacent** (0.3): nearby fields (biology → chemistry)
+- **cross-domain** (0.6): different disciplines (software → architecture → music)
+- **distant** (0.9): the weird leap (API design → grief → fermentation)
 
-*(This isn't a linear dial—the LLM interprets intent, not magnitude.)*
+*(These are prompting hints, not precision dials—the LLM interprets intent, not magnitude.)*
 
 ### RETURN
 Come back to an earlier concept, but you're different now. What do you see that you couldn't see before? This is NOT revision (fixing mistakes). This is re-seeing (transformed perspective).
@@ -113,6 +111,8 @@ Associative Dreaming is designed for:
 4. If a drift feels "too random"—increase chaosLevel and do it anyway
 5. Collision is for forcing insight. Pick concepts that feel wrong together
 6. You're not solving yet. You're exploring.
+
+**Expect noise.** Most drifts won't produce insight. That's normal—you're exploring a space, not following a path. The tool makes the exploration visible; it doesn't guarantee discoveries.
 
 ## Recognizing Value vs. Noise
 
@@ -198,7 +198,7 @@ Sequential Thinking converges. Associative Dreaming diverges. You need both.
 
 ## Related Work
 
-This complements tools like [unconventional-thinking](https://github.com/stagsz/unconventional-thinking). While that server generates "unreasonable thoughts" and branches, Associative Dreaming is designed for *rhizomatic wandering* with explicit operations (Drift/Return/Collision) and a focus on reframing rather than mere exploration.
+This complements tools like [unconventional-thinking](https://github.com/stagsz/unconventional-thinking). While that server generates "unreasonable thoughts" and branches, Associative Dreaming focuses on *rhizomatic wandering* with explicit operations (Drift/Return/Collision) and reframing rather than mere exploration.
 
 ## Building
 
