@@ -1,18 +1,3 @@
-/**
- * Associative Dreaming Server - The Yin to Sequential Thinking's Yang
- *
- * PHILOSOPHY:
- * Sequential Thinking = Linear progression with revision/branching (Yang)
- * Associative Dreaming = Rhizomatic wandering with return/collision (Yin)
- *
- * Sequential Thinking tracks: thought → thought → thought (with backtrack)
- * Associative Dreaming tracks: concept ↔ concept ↔ concept (with collision)
- *
- * THE LLM DOES ALL THE CREATIVE WORK.
- * The server just tracks the wandering.
- *
- * ~90 lines. Elegant. Minimal. Trusting.
- */
 export interface DreamData {
     concept: string;
     driftDepth: number;
@@ -24,12 +9,58 @@ export interface DreamData {
     isCollision?: boolean;
     collidesWith?: string;
     collisionId?: string;
+    resetSession?: boolean;
+}
+export interface DriftMetrics {
+    semanticDistance: number;
+    targetChaos: number;
+    calibration: "conservative" | "on-target" | "wild";
+    isStuck: boolean;
+    suggestion?: string;
+}
+export interface SessionAnalytics {
+    totalDrifts: number;
+    avgSemanticDistance: number;
+    maxSemanticDistance: number;
+    minSemanticDistance: number;
+    collisionTensions: number[];
+    avgCollisionTension: number;
+    uniqueConcepts: number;
+    stuckCount: number;
+    calibrationHistory: string[];
 }
 export declare class AssociativeDreamingServer {
     private dreamHistory;
     private collisions;
+    private driftDistances;
+    private collisionTensions;
+    private calibrationHistory;
+    private stuckCount;
     private disableDreamLogging;
     constructor();
+    reset(): void;
+    /**
+     * Basic Porter-style stemming (handles common suffixes)
+     * Not perfect, but catches grief/grieving, run/running, etc.
+     */
+    private stem;
+    /**
+     * Check if two words belong to the same conceptual cluster
+     */
+    private inSameCluster;
+    /**
+     * Check if any words from two concepts share a conceptual cluster
+     */
+    private shareConceptualCluster;
+    private computeSemanticDistance;
+    private detectStuck;
+    private calibrateDrift;
+    private getSuggestion;
+    /**
+     * Normalize concept to sentence case for consistent display
+     */
+    private toSentenceCase;
+    private getAnalytics;
     private formatDream;
     processDream(input: DreamData): {
         content: Array<{
