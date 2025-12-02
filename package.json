@@ -1,14 +1,12 @@
 {
-  "name": "@modelcontextprotocol/server-associative-dreaming",
-  "version": "2.1.0",
-  "description": "MCP server for associative dreaming - the Yin to Sequential Thinking's Yang. Divergent exploration through concept space with drift measurement and collision detection.",
+  "name": "associative-dreaming-mcp-server",
+  "version": "3.0.0",
+  "description": "MCP server for associative dreaming - the Yin to Sequential Thinking's Yang. Non-linear exploration through concept space.",
   "license": "MIT",
   "author": "",
-  "homepage": "https://modelcontextprotocol.io",
-  "bugs": "https://github.com/modelcontextprotocol/servers/issues",
   "type": "module",
   "bin": {
-    "mcp-server-associative-dreaming": "dist/index.js"
+    "associative-dreaming": "dist/index.js"
   },
   "files": [
     "dist"
@@ -17,18 +15,15 @@
     "build": "tsc && shx chmod +x dist/*.js",
     "prepare": "npm run build",
     "watch": "tsc --watch",
-    "test": "vitest run --coverage"
+    "test": "node real-test.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.23.0",
-    "chalk": "^5.3.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/node": "^22",
-    "@vitest/coverage-v8": "^2.1.8",
     "shx": "^0.3.4",
-    "typescript": "^5.3.3",
-    "vitest": "^2.1.8"
+    "typescript": "^5.3.3"
   }
 }

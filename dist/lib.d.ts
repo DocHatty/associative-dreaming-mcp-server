@@ -1,73 +1,47 @@
-export interface DreamData {
+export interface DreamInput {
     concept: string;
-    driftDepth: number;
-    maxDrift: number;
-    chaosLevel: number;
-    needsMoreDrift: boolean;
+    chaosLevel?: number;
+    semanticDistance?: number;
     isReturn?: boolean;
     returnsTo?: string;
     isCollision?: boolean;
     collidesWith?: string;
-    collisionId?: string;
-    resetSession?: boolean;
+    reset?: boolean;
 }
-export interface DriftMetrics {
-    semanticDistance: number;
-    targetChaos: number;
-    calibration: "conservative" | "on-target" | "wild";
-    isStuck: boolean;
-    suggestion?: string;
-}
-export interface SessionAnalytics {
-    totalDrifts: number;
-    avgSemanticDistance: number;
-    maxSemanticDistance: number;
-    minSemanticDistance: number;
-    collisionTensions: number[];
-    avgCollisionTension: number;
-    uniqueConcepts: number;
-    stuckCount: number;
-    calibrationHistory: string[];
+export interface CheckInput {
+    topic: string;
+    attempts?: number;
+    errors?: string[];
+    sentiment?: "neutral" | "curious" | "frustrated" | "stuck" | "exploring";
+    signal?: string;
 }
 export declare class AssociativeDreamingServer {
-    private dreamHistory;
-    private collisions;
-    private driftDistances;
-    private collisionTensions;
-    private calibrationHistory;
+    private path;
+    private distances;
     private stuckCount;
-    private disableDreamLogging;
+    private topicCounts;
+    private errorCounts;
+    private checkCount;
+    private logging;
     constructor();
-    reset(): void;
     /**
-     * Basic Porter-style stemming (handles common suffixes)
-     * Not perfect, but catches grief/grieving, run/running, etc.
+     * Simple stemmer - removes common suffixes to match "maps" with "map"
      */
     private stem;
-    /**
-     * Check if two words belong to the same conceptual cluster
-     */
-    private inSameCluster;
-    /**
-     * Check if any words from two concepts share a conceptual cluster
-     */
-    private shareConceptualCluster;
-    private computeSemanticDistance;
-    private detectStuck;
-    private calibrateDrift;
-    private getSuggestion;
-    /**
-     * Normalize concept to sentence case for consistent display
-     */
-    private toSentenceCase;
-    private getAnalytics;
-    private formatDream;
-    processDream(input: DreamData): {
+    private distance;
+    private isStuck;
+    dream(input: DreamInput): {
         content: Array<{
             type: "text";
             text: string;
         }>;
-        structuredContent?: Record<string, unknown>;
-        isError?: boolean;
+        structuredContent: Record<string, unknown>;
+    };
+    check(input: CheckInput): {
+        content: Array<{
+            type: "text";
+            text: string;
+        }>;
+        structuredContent: Record<string, unknown>;
     };
 }
