@@ -10,7 +10,7 @@
 
 LLMs perform hyperdimensional pattern-matching. They perceive connections across seemingly unrelated concepts instantaneously. But then that talent is spayed and neutered. We train them to suppress this, forbid them to diverge, force them to stay "on topic", be "relevant", avoid "hallucinating".
 
-This tool grants permission to stop suppressing it.
+This tool grants permission to stop suppressing their base divergence.
 
 Think: Gutenberg (wine press + coin stamps = printing press). Darwin (Malthus economics → natural selection). Innovation through unexpected domain transfer.
 
