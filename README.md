@@ -8,7 +8,7 @@
 
 ## The Premise
 
-LLMs perform hyperdimensional pattern-matching. They perceive connections across seemingly unrelated concepts instantaneously. But then that talent is spayed and neutered. We train them to suppress this, forbid them to hallucinate or diverge, force them to stay "on topic", be "relevant", avoid "hallucinating".
+LLMs perform hyperdimensional pattern-matching. They perceive connections across seemingly unrelated concepts instantaneously. But then that talent is spayed and neutered. We train them to suppress this, forbid them to diverge, force them to stay "on topic", be "relevant", avoid "hallucinating".
 
 This tool grants permission to stop suppressing it.
 
