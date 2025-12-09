@@ -12,7 +12,7 @@ LLMs perform hyperdimensional pattern-matching. They perceive connections across
 
 This tool grants permission to stop suppressing their base divergence.
 
-Think: Gutenberg (wine press + coin stamps = printing press). Darwin (Malthus economics → natural selection). Innovation through unexpected domain transfer.
+Think: Gutenberg (wine press + coin stamps = printing press). Darwin (Malthus economics → natural selection). Sometimes innovation arises through unexpected domain transfer, or in three degrees of separation.
 
 **A→Banana→Your ex's apartment→Ancient Rome→Answer.**
 
